@@ -14,6 +14,101 @@ expertsRouter.get('/', (req, res) => {
   })
 })
 
+expertsRouter.get('/form', (req, res) => {
+  let sqllan = 'SELECT la.languagesName FROM languages AS la;'
+  let sqlgeo = 'SELECT geo.geoExpertiseName FROM geoexpertise AS geo;'
+  let sqlkoe = 'SELECT koe.kindOfExpertName FROM kindofexpert AS koe; '
+  let sqlel = 'SELECT el.expertiseLevelName FROM expertiselevel AS el;'
+  let sqlpr = 'SELECT pr.practiceType FROM practice AS pr;'
+  let sqljob = 'SELECT job.jobTitleName FROM jobtitle AS job;'
+  let languages = []
+  let geoExpertise = []
+  let kindOfExpert = []
+  let expertiseLevel = []
+  let practice = []
+  let jobTitle = []
+
+  connection.query(sqllan, (errlan, resultlan) => {
+    if (errlan) {
+      console.error(errlan)
+      res.status(500).send('Error retrieving form datas')
+    } else {
+      resultlan.forEach(la =>
+        languages.push({ value: la.languagesName, label: la.languagesName })
+      )
+      connection.query(sqlgeo, (errgeo, resultgeo) => {
+        if (errgeo) {
+          console.error(errgeo)
+        } else {
+          resultgeo.forEach(geo =>
+            geoExpertise.push({
+              value: geo.geoExpertiseName,
+              label: geo.geoExpertiseName
+            })
+          )
+          connection.query(sqlkoe, (errkoe, resultkoe) => {
+            if (errkoe) {
+              console.error(errkoe)
+            } else {
+              resultkoe.forEach(koe =>
+                kindOfExpert.push({
+                  value: koe.kindOfExpertName,
+                  label: koe.kindOfExpertName
+                })
+              )
+              connection.query(sqlel, (errel, resultel) => {
+                if (errel) {
+                  console.error(errel)
+                } else {
+                  resultel.forEach(el =>
+                    expertiseLevel.push({
+                      value: el.expertiseLevelName,
+                      label: el.expertiseLevelName
+                    })
+                  )
+                  connection.query(sqlpr, (errpr, resultpr) => {
+                    if (errpr) {
+                      console.error(errpr)
+                    } else {
+                      resultpr.forEach(pr =>
+                        practice.push({
+                          value: pr.practiceType,
+                          label: pr.practiceType
+                        })
+                      )
+                      connection.query(sqljob, (errjob, resultjob) => {
+                        if (errjob) {
+                          console.error(errjob)
+                        } else {
+                          resultjob.forEach(job =>
+                            jobTitle.push({
+                              value: job.jobTitleName,
+                              label: job.jobTitleName
+                            })
+                          )
+                          const options = {
+                            languages: [...languages],
+                            geoExpertise: [...geoExpertise],
+                            kindOfExpert: [...kindOfExpert],
+                            expertiseLevel: [...expertiseLevel],
+                            practice: [...practice],
+                            jobTitle: [...jobTitle]
+                          }
+                          res.status(200).json(options)
+                        }
+                      })
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
 expertsRouter.post('/', (req, res) => {
   const {
     firstname,
