@@ -109,6 +109,35 @@ expertsRouter.get('/form', (req, res) => {
   })
 })
 
+expertsRouter.post('/test', (req, res) => {
+  console.log('body', req.body)
+  const {
+    firstname,
+    lastname,
+    email,
+    phone,
+    company_id,
+    linkedinProfile,
+    price,
+    numExpert,
+    kindOfExpert_id,
+    practice_id,
+    contries_id,
+    expertiseLevel_id,
+    feedbackExpert,
+    expertscol,
+    cost,
+    keywords,
+    jobtitle_id,
+    languages_id,
+    pastCompany_id,
+    contactType_id,
+    geoExpertise
+  } = req.body
+  console.log('geoExpertise', geoExpertise)
+  console.log('firstname', firstname)
+})
+
 expertsRouter.post('/', (req, res) => {
   const {
     firstname,
