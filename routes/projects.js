@@ -14,49 +14,4 @@ projectsRouter.get('/', (req, res) => {
   })
 })
 
-projectsRouter.post('/add', (req, res) => {
-  const sql = 'INSERT INTO'
-  // const value = [req.body. ---mes valeurs ---];
-
-  connection.query(sql, value, (err, result) => {
-    if (err) {
-      console.error(err)
-      res.status(500).send('Error saving the project')
-    } else {
-      const id = result.insertId
-      // const createdProject = { ---mes valeurs --- }
-      res.status(201).json(createdProject)
-    }
-  })
-})
-
-projectsRouter.put('/edit', (req, res) => {
-  const sql = 'UPDATE'
-  // const value = [req.body. ---mes valeurs ---];
-  const userPropsToUpdate = req.body
-  connection.query(sql, value, (err, result) => {
-    if (err) {
-      console.error(err)
-      res.status(500).send('Error updating a project')
-    } else {
-      const id = result.insertId
-      // const updatedProject = { ---mes valeurs --- }
-      res.status(204).json(updatedProject)
-    }
-  })
-})
-
-projectsRouter.delete('/del/:id', (req, res) => {
-  const sql = 'DELETE FROM'
-  const userId = req.params.id
-  connection.query(sql, value, (err, result) => {
-    if (err) {
-      console.error(err)
-      res.status(500).send('Error deleting a project')
-    } else {
-      res.sendStatus(204)
-    }
-  })
-})
-
 module.exports = projectsRouter
