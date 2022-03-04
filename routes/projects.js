@@ -14,47 +14,174 @@ projectsRouter.get('/', (req, res) => {
   })
 })
 
-projectsRouter.post('/add', (req, res) => {
-  const sql = 'INSERT INTO'
-  // const value = [req.body. ---mes valeurs ---];
+projectsRouter.post('/', (req, res) => {
+  const {
+    firstname,
+    lastname,
+    email,
+    phone,
+    city,
+    feedbackClient,
+    companyType_id,
+    company_id,
+    numClients,
+    contactType_id,
+    clients_id,
+    languages_id,
+    service_id,
+    itwStart,
+    itwDeadline,
+    projectTitle,
+    quantityExpert,
+    clientComment,
+    totalPrice,
+    numProject,
+    status_id,
+    expertiseLevel_id,
+    client_id,
+    jobTitle_id,
+    practice_id,
+    projectType_id,
+    fonction_id,
+    geoExpertise_id,
+    industry_id,
+    projectTypeName
+  } = req.body
 
-  connection.query(sql, value, (err, result) => {
+  let datas = [
+    itwStart,
+    itwDeadline,
+    projectTitle,
+    quantityExpert,
+    clientComment,
+    totalPrice,
+    numProject,
+    status_id,
+    expertiseLevel_id,
+    client_id
+  ]
+
+  let sql =
+    'INSERT INTO projects (itwStart, itwDeadline , projectTitle, quantityExpert, clientComment, totalPrice, numProject, status_id, expertiseLevel_id, client_id) VALUES (?,?,?,?,?,?,?,?,?,?);'
+  let sql2 =
+    'INSERT INTO projects_exclude_company (company_id, projects_id) VALUES (?,?);'
+  let sql3 =
+    'INSERT INTO projects_has_jobtitle (projects_id, jobTitle_id) VALUES (?,?);'
+  let sql4 =
+    'INSERT INTO projects_has_practice (projects_id, practice_id) VALUES (?,?);'
+  let sql5 =
+    'INSERT INTO projects_has_projecttype (projects_id, projectType_id) VALUES (?,?);'
+  let sql6 =
+    'INSERT INTO projects_need_fonction (fonction_id, projects_id) VALUES (?,?);'
+  let sql7 =
+    'INSERT INTO projects_need_geoexpertise (geoExpertise_id, projects_id) VALUES (?,?);'
+  let sql8 =
+    'INSERT INTO projects_need_industry (industry_id, projects_id) VALUES (?,?);'
+  let sql9 =
+    'INSERT INTO projects_recommend_company (company_id, projects_id) VALUES (?,?);'
+  let sql10 = 'INSERT INTO projecttype (projectTypeName) VALUES (?);'
+
+  connection.query(sql, datas, (err, result) => {
     if (err) {
       console.error(err)
-      res.status(500).send('Error saving the project')
+      res.status(500).send('Error requesting POST projects')
     } else {
       const id = result.insertId
-      // const createdProject = { ---mes valeurs --- }
-      res.status(201).json(createdProject)
-    }
-  })
-})
-
-projectsRouter.put('/edit', (req, res) => {
-  const sql = 'UPDATE'
-  // const value = [req.body. ---mes valeurs ---];
-  const userPropsToUpdate = req.body
-  connection.query(sql, value, (err, result) => {
-    if (err) {
-      console.error(err)
-      res.status(500).send('Error updating a project')
-    } else {
-      const id = result.insertId
-      // const updatedProject = { ---mes valeurs --- }
-      res.status(204).json(updatedProject)
-    }
-  })
-})
-
-projectsRouter.delete('/del/:id', (req, res) => {
-  const sql = 'DELETE FROM'
-  const userId = req.params.id
-  connection.query(sql, value, (err, result) => {
-    if (err) {
-      console.error(err)
-      res.status(500).send('Error deleting a project')
-    } else {
-      res.sendStatus(204)
+      let datas2 = [id, company_id]
+      connection.query(sql2, datas2, (err, result) => {
+        if (err) {
+          console.error(err)
+          res.status(500).send('Error requesting POST2 projects')
+        } else {
+          let datas3 = [id, jobTitle_id]
+          connection.query(sql3, datas3, (err, result) => {
+            if (err) {
+              console.error(err)
+              res.status(500).send('Error requesting POST3 projects')
+            } else {
+              let datas4 = [id, practice_id]
+              connection.query(sql4, datas4, (err, result) => {
+                if (err) {
+                  console.error(err)
+                  res.status(500).send('Error requesting POST4 projects')
+                } else {
+                  let datas5 = [id, projectType_id]
+                  connection.query(sql5, datas5, (err, result) => {
+                    if (err) {
+                      console.error(err)
+                      res.status(500).send('Error requesting POST5 projects')
+                    } else {
+                      let datas6 = [id, fonction_id]
+                      connection.query(sql6, datas6, (err, result) => {
+                        if (err) {
+                          console.error(err)
+                          res
+                            .status(500)
+                            .send('Error requesting POST6 projects')
+                        } else {
+                          let datas7 = [id, geoExpertise_id]
+                          connection.query(sql7, datas7, (err, result) => {
+                            if (err) {
+                              console.error(err)
+                              res
+                                .status(500)
+                                .send('Error requesting POST7 projects')
+                            } else {
+                              let datas8 = [id, industry_id]
+                              connection.query(sql8, datas8, (err, result) => {
+                                if (err) {
+                                  console.error(err)
+                                  res
+                                    .status(500)
+                                    .send('Error requesting POST8 projects')
+                                } else {
+                                  let datas9 = [id, company_id]
+                                  connection.query(
+                                    sql9,
+                                    datas9,
+                                    (err, result) => {
+                                      if (err) {
+                                        console.error(err)
+                                        res
+                                          .status(500)
+                                          .send(
+                                            'Error requesting POST9 projects'
+                                          )
+                                      } else {
+                                        let datas10 = [id, projectTypeName]
+                                        connection.query(
+                                          sql10,
+                                          datas10,
+                                          (err, result) => {
+                                            if (err) {
+                                              console.error(err)
+                                              res
+                                                .status(500)
+                                                .send(
+                                                  'Error requesting POST10 projects'
+                                                )
+                                            } else {
+                                              res.status(200).json(result)
+                                            }
+                                          }
+                                        )
+                                      }
+                                    }
+                                  )
+                                }
+                              })
+                            }
+                          })
+                        }
+                      })
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
     }
   })
 })
