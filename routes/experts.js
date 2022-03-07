@@ -21,7 +21,6 @@ expertsRouter.get('/form', (req, res) => {
   let sqlel = 'SELECT id, expertiseLevelName FROM expertiselevel;'
   let sqlpr = 'SELECT id, practiceType FROM practice;'
   let sqljob = 'SELECT id, jobTitleName FROM jobtitle;'
-  let sqlctr = 'SELECT id, countriesName FROM countries;'
   let sqlcie = 'SELECT id, companyName FROM company;'
   let sqlctc= 'SELECT id, contactTypeName FROM contacttype;'
   let sqlpjt= 'SELECT id, projectTitle FROM projects; '
@@ -99,75 +98,61 @@ expertsRouter.get('/form', (req, res) => {
                               label: job.jobTitleName
                             })
                           )
-                          connection.query(sqlctr, (errctr, resultctr) => {
-                            if (errctr) {
-                              console.error(errctr)
+                          connection.query(sqlcie, (errcie, resultcie) => {
+                            if (errcie) {
+                              console.error(errcie)
                             } else {
-                              resultctr.forEach(ctr =>
-                                countries.push({
-                                  id: ctr.id, 
-                                  value: ctr.countriesName,
-                                  label: ctr.countriesName
+                              resultcie.forEach(cie =>
+                                companies.push({
+                                  id: cie.id, 
+                                  value: cie.companyName,
+                                  label: cie.companyName
                                 })
                               )
-                                connection.query(sqlcie, (errcie, resultcie) => {
-                                  if (errcie) {
-                                    console.error(errcie)
-                                  } else {
-                                    resultcie.forEach(cie =>
-                                      companies.push({
-                                        id: cie.id, 
-                                        value: cie.companyName,
-                                        label: cie.companyName
-                                      })
-                                    )
-                                    connection.query(sqlctc, (errctc, resultctc) => {
-                                      if (errctc) {
-                                        console.error(errctc)
-                                      } else {
-                                        resultctc.forEach(ctc =>
-                                          contactType.push({
-                                            id: ctc.id, 
-                                            value: ctc.contactTypeName,
-                                            label: ctc.contactTypeName
-                                          })
-                                        )
-                                        connection.query(sqlpjt, (errpjt, resultpjt) => {
-                                          if (errpjt) {
-                                            console.error(errpjt)
-                                          } else {
-                                            resultpjt.forEach(pjt =>
-                                              projects.push({
-                                                id: pjt.id, 
-                                                value: pjt.projectTitle,
-                                                label: pjt.projectTitle
-                                              })
-                                            )
-                                          const options = {
-                                            languages: [...languages],
-                                            geoExpertise: [...geoExpertise],
-                                            kindOfExpert: [...kindOfExpert],
-                                            expertiseLevel: [...expertiseLevel],
-                                            practice: [...practice],
-                                            jobTitle: [...jobTitle],
-                                            countries: [...countries],
-                                            companies: [...companies],
-                                            contactType: [...contactType], 
-                                            projects: [...projects]
-                                          }
-                                          res.status(200).json(options)
-                                        }
-                                      })
+                              connection.query(sqlctc, (errctc, resultctc) => {
+                                if (errctc) {
+                                  console.error(errctc)
+                                } else {
+                                  resultctc.forEach(ctc =>
+                                    contactType.push({
+                                      id: ctc.id, 
+                                      value: ctc.contactTypeName,
+                                      label: ctc.contactTypeName
+                                    })
+                                  )
+                                  connection.query(sqlpjt, (errpjt, resultpjt) => {
+                                    if (errpjt) {
+                                      console.error(errpjt)
+                                    } else {
+                                      resultpjt.forEach(pjt =>
+                                        projects.push({
+                                          id: pjt.id, 
+                                          value: pjt.projectTitle,
+                                          label: pjt.projectTitle
+                                        })
+                                      )
+                                    const options = {
+                                      languages: [...languages],
+                                      geoExpertise: [...geoExpertise],
+                                      kindOfExpert: [...kindOfExpert],
+                                      expertiseLevel: [...expertiseLevel],
+                                      practice: [...practice],
+                                      jobTitle: [...jobTitle],
+                                      companies: [...companies],
+                                      contactType: [...contactType], 
+                                      projects: [...projects]
                                     }
-                                  })
-                                }
-                              })
-                            }
-                          })
-                        }
-                      })
-                    }
-                  })
+                                    res.status(200).json(options)
+                                    }
+                                })
+                              }
+                            })
+                          }
+                        })
+                      }
+                    })
+                  }
+                })
                 }
               })
             }
@@ -191,31 +176,37 @@ expertsRouter.post('/test', (req, res) => {
     numExpert,
     kindOfExpert_id,
     practice_id,
-    contries_id,
     expertiseLevel_id,
     feedbackExpert,
-    expertscol,
     cost,
     keywords,
     jobtitle_id,
     languages_id,
     pastCompany_id,
     contactType_id,
-    geoExpertise
+    geoExpertise_id,
+    projectTitle
   } = req.body
-  console.log('geoExpertise', geoExpertise)
+  console.log(req.body);
+  console.log('geoExpertise', geoExpertise_id)
   console.log('firstname', firstname)
 
-  // const test = [[4,3],[4,2]]
+  const test = []
 
-  let sql = "INSERT INTO experts_has_geoexpertise (experts_id, geoExpertise_id) VALUES ?;"
-  connection.query(sql, [test], (err, res) => {
-    if (err){
-      console.error("error test", err);
-    } else {
-      console.log("réussi");
-    }
-  })
+  for (let i = 0; i < geoExpertise_id.length; i++) {
+    test.push([5, geoExpertise_id[i]])
+  }
+
+    console.log("resultat test", test)
+  // const test = [[4,3],[4,2]]
+  // let sql = "INSERT INTO experts_has_geoexpertise (experts_id, geoExpertise_id) VALUES ?;"
+  // connection.query(sql, [test], (err, res) => {
+  //   if (err){
+  //     console.error("error test", err);
+  //   } else {
+  //     console.log("réussi");
+  //   }
+  // })
 })
 
 expertsRouter.post('/', (req, res) => {
@@ -230,17 +221,16 @@ expertsRouter.post('/', (req, res) => {
     numExpert,
     kindOfExpert_id,
     practice_id,
-    contries_id,
     expertiseLevel_id,
     feedbackExpert,
-    expertscol,
     cost,
     keywords,
     jobtitle_id,
     languages_id,
     pastCompany_id,
     contactType_id,
-    geoExpertise_id
+    geoExpertise_id,
+    projects_id
   } = req.body
 
   let datas = [
@@ -254,56 +244,79 @@ expertsRouter.post('/', (req, res) => {
     numExpert,
     kindOfExpert_id,
     practice_id,
-    contries_id,
     expertiseLevel_id,
     feedbackExpert,
-    expertscol,
     cost,
     keywords,
     jobtitle_id
-  ]
+  ]  
 
   let sql =
-    'INSERT INTO experts (firstname, lastname, email, phone, company_id, linkedinProfile, price, numExpert, kindOfExpert_id, practice_id, countries_id, expertiseLevel_id, feedbackExpert, expertscol, cost, keywords, jobtitle_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    'INSERT INTO experts (firstname, lastname, email, phone, company_id, linkedinProfile, price, numExpert, kindOfExpert_id, practice_id, expertiseLevel_id, feedbackExpert, cost, keywords, jobtitle_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
   let sql2 =
-    'INSERT INTO experts_has_languages (experts_id, languages_id) VALUES (?, ?);'
+    'INSERT INTO experts_has_languages (experts_id, languages_id) VALUES ?;'
   let sql3 =
-    'INSERT INTO past_companies (experts_id, pastCompany_id) VALUES (?, ?);'
+    'INSERT INTO past_companies (experts_id, pastCompany_id) VALUES ?;'
   let sql4 =
-    'INSERT INTO experts_has_contacttype (experts_id, contactType_id) VALUES (?, ?);'
+    'INSERT INTO experts_has_contacttype (experts_id, contactType_id) VALUES ?;'
   let sql5 =
-    'INSERT INTO experts_has_geoexpertise (experts_id, geoExpertise_id) VALUES (?, ?);'
+    'INSERT INTO experts_has_geoexpertise (experts_id, geoExpertise_id) VALUES ?;'
+  let sql6 =
+    'INSERT INTO experts_has_projects (experts_id, projects_id) VALUES ?;'
   connection.query(sql, datas, (err, result) => {
     if (err) {
       console.error(err)
       res.status(500).send('Error requesting POST experts')
     } else {
       const id = result.insertId
-      let datas2 = [id, languages_id]
-      connection.query(sql2, datas2, (err, result) => {
+      let lan = []
+      for (let i = 0; i < languages_id.length; i++) {
+        lan.push([id, languages_id[i]])
+      }    
+      connection.query(sql2, [lan], (err, result) => {
         if (err) {
           console.error(err)
           res.status(500).send('Error requesting POST2 experts')
         } else {
-          let datas3 = [id, pastCompany_id]
-          connection.query(sql3, datas3, (err, result) => {
+          let pcom = []
+          for (let i = 0; i < pastCompany_id.length; i++) {
+          pcom.push([id, pastCompany_id[i]])
+          }
+          connection.query(sql3, [pcom], (err, result) => {
             if (err) {
               console.error(err)
               res.status(500).send('Error requesting POST3 experts')
             } else {
-              let datas4 = [id, contactType_id]
-              connection.query(sql4, datas4, (err, result) => {
+              let ctc = []
+              for (let i = 0; i < contactType_id.length; i++) {
+                ctc.push([id, contactType_id[i]])
+              }
+              connection.query(sql4, [ctc], (err, result) => {
                 if (err) {
                   console.error(err)
                   res.status(500).send('Error requesting POST4 experts')
                 } else {
-                  let datas5 = [id, geoExpertise_id]
-                  connection.query(sql5, datas5, (err, result) => {
+                  let geo = []
+                  for (let i = 0; i < geoExpertise_id.length; i++) {
+                    geo.push([id, geoExpertise_id[i]])
+                  }
+                  connection.query(sql5, [geo], (err, result) => {
                     if (err) {
                       console.error(err)
                       res.status(500).send('Error requesting POST5 experts')
                     } else {
-                      res.status(200).json(result)
+                      let pjt = []
+                      for (let i = 0; i < projects_id.length; i++) {
+                      pjt.push([id, projects_id[i]])
+                      }
+                      connection.query(sql6, [pjt], (err, result) => {
+                        if (err) {
+                          console.error(err)
+                          res.status(500).send('Error requesting POST6 experts')
+                        } else {
+                        res.status(200).json(result)
+                        }
+                      })
                     }
                   })
                 }
