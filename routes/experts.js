@@ -165,48 +165,19 @@ expertsRouter.get('/form', (req, res) => {
 
 expertsRouter.post('/test', (req, res) => {
   console.log('body', req.body)
-  const {
-    firstname,
-    lastname,
-    email,
-    phone,
-    company_id,
-    linkedinProfile,
-    price,
-    numExpert,
-    kindOfExpert_id,
-    practice_id,
-    expertiseLevel_id,
-    feedbackExpert,
-    cost,
-    keywords,
-    jobtitle_id,
-    languages_id,
-    pastCompany_id,
-    contactType_id,
-    geoExpertise_id,
-    projectTitle
-  } = req.body
-  console.log(req.body);
-  console.log('geoExpertise', geoExpertise_id)
-  console.log('firstname', firstname)
-
-  const test = []
-
-  for (let i = 0; i < geoExpertise_id.length; i++) {
-    test.push([5, geoExpertise_id[i]])
-  }
-
-    console.log("resultat test", test)
-  // const test = [[4,3],[4,2]]
-  // let sql = "INSERT INTO experts_has_geoexpertise (experts_id, geoExpertise_id) VALUES ?;"
-  // connection.query(sql, [test], (err, res) => {
-  //   if (err){
-  //     console.error("error test", err);
-  //   } else {
-  //     console.log("réussi");
-  //   }
-  // })
+  const {table, column, value} = req.body
+  console.log(value)
+  let sql = `INSERT INTO ${table} (${column}) VALUE (?);`
+  connection.query(sql, value, (err, result) => {
+    if (err) {
+      console.error(err)
+      res.status(500).send('Error requesting POST experts')
+    } else {
+      const id = result.insertId
+      const newItem = {id:id, value:value, label:value} 
+      res.status(200).json(newItem)
+    }
+  })
 })
 
 expertsRouter.post('/', (req, res) => {
