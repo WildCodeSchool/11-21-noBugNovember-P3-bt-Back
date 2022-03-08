@@ -22,15 +22,14 @@ expertsRouter.get('/form', (req, res) => {
   let sqlpr = 'SELECT id, practiceType FROM practice;'
   let sqljob = 'SELECT id, jobTitleName FROM jobtitle;'
   let sqlcie = 'SELECT id, companyName FROM company;'
-  let sqlctc= 'SELECT id, contactTypeName FROM contacttype;'
-  let sqlpjt= 'SELECT id, projectTitle FROM projects; '
+  let sqlctc = 'SELECT id, contactTypeName FROM contacttype;'
+  let sqlpjt = 'SELECT id, projectTitle FROM projects; '
   let languages = []
   let geoExpertise = []
   let kindOfExpert = []
   let expertiseLevel = []
   let practice = []
   let jobTitle = []
-  let countries = []
   let companies = []
   let contactType = []
   let projects = []
@@ -41,7 +40,11 @@ expertsRouter.get('/form', (req, res) => {
       res.status(500).send('Error retrieving form datas')
     } else {
       resultlan.forEach(la =>
-        languages.push({ id: la.id, value: la.languagesName, label: la.languagesName })
+        languages.push({
+          id: la.id,
+          value: la.languagesName,
+          label: la.languagesName
+        })
       )
       connection.query(sqlgeo, (errgeo, resultgeo) => {
         if (errgeo) {
@@ -49,7 +52,7 @@ expertsRouter.get('/form', (req, res) => {
         } else {
           resultgeo.forEach(geo =>
             geoExpertise.push({
-              id: geo.id, 
+              id: geo.id,
               value: geo.geoExpertiseName,
               label: geo.geoExpertiseName
             })
@@ -60,7 +63,7 @@ expertsRouter.get('/form', (req, res) => {
             } else {
               resultkoe.forEach(koe =>
                 kindOfExpert.push({
-                  id: koe.id, 
+                  id: koe.id,
                   value: koe.kindOfExpertName,
                   label: koe.kindOfExpertName
                 })
@@ -71,7 +74,7 @@ expertsRouter.get('/form', (req, res) => {
                 } else {
                   resultel.forEach(el =>
                     expertiseLevel.push({
-                      id: el.id, 
+                      id: el.id,
                       value: el.expertiseLevelName,
                       label: el.expertiseLevelName
                     })
@@ -82,7 +85,7 @@ expertsRouter.get('/form', (req, res) => {
                     } else {
                       resultpr.forEach(pr =>
                         practice.push({
-                          id: pr.id, 
+                          id: pr.id,
                           value: pr.practiceType,
                           label: pr.practiceType
                         })
@@ -93,7 +96,7 @@ expertsRouter.get('/form', (req, res) => {
                         } else {
                           resultjob.forEach(job =>
                             jobTitle.push({
-                              id: job.id, 
+                              id: job.id,
                               value: job.jobTitleName,
                               label: job.jobTitleName
                             })
@@ -104,7 +107,7 @@ expertsRouter.get('/form', (req, res) => {
                             } else {
                               resultcie.forEach(cie =>
                                 companies.push({
-                                  id: cie.id, 
+                                  id: cie.id,
                                   value: cie.companyName,
                                   label: cie.companyName
                                 })
@@ -115,44 +118,47 @@ expertsRouter.get('/form', (req, res) => {
                                 } else {
                                   resultctc.forEach(ctc =>
                                     contactType.push({
-                                      id: ctc.id, 
+                                      id: ctc.id,
                                       value: ctc.contactTypeName,
                                       label: ctc.contactTypeName
                                     })
                                   )
-                                  connection.query(sqlpjt, (errpjt, resultpjt) => {
-                                    if (errpjt) {
-                                      console.error(errpjt)
-                                    } else {
-                                      resultpjt.forEach(pjt =>
-                                        projects.push({
-                                          id: pjt.id, 
-                                          value: pjt.projectTitle,
-                                          label: pjt.projectTitle
-                                        })
-                                      )
-                                    const options = {
-                                      languages: [...languages],
-                                      geoExpertise: [...geoExpertise],
-                                      kindOfExpert: [...kindOfExpert],
-                                      expertiseLevel: [...expertiseLevel],
-                                      practice: [...practice],
-                                      jobTitle: [...jobTitle],
-                                      companies: [...companies],
-                                      contactType: [...contactType], 
-                                      projects: [...projects]
+                                  connection.query(
+                                    sqlpjt,
+                                    (errpjt, resultpjt) => {
+                                      if (errpjt) {
+                                        console.error(errpjt)
+                                      } else {
+                                        resultpjt.forEach(pjt =>
+                                          projects.push({
+                                            id: pjt.id,
+                                            value: pjt.projectTitle,
+                                            label: pjt.projectTitle
+                                          })
+                                        )
+                                        const options = {
+                                          languages: [...languages],
+                                          geoExpertise: [...geoExpertise],
+                                          kindOfExpert: [...kindOfExpert],
+                                          expertiseLevel: [...expertiseLevel],
+                                          practice: [...practice],
+                                          jobTitle: [...jobTitle],
+                                          companies: [...companies],
+                                          contactType: [...contactType],
+                                          projects: [...projects]
+                                        }
+                                        res.status(200).json(options)
+                                      }
                                     }
-                                    res.status(200).json(options)
-                                    }
-                                })
-                              }
-                            })
-                          }
-                        })
-                      }
-                    })
-                  }
-                })
+                                  )
+                                }
+                              })
+                            }
+                          })
+                        }
+                      })
+                    }
+                  })
                 }
               })
             }
@@ -165,7 +171,7 @@ expertsRouter.get('/form', (req, res) => {
 
 expertsRouter.post('/test', (req, res) => {
   console.log('body', req.body)
-  const {table, column, value} = req.body
+  const { table, column, value } = req.body
   console.log(value)
   let sql = `INSERT INTO ${table} (${column}) VALUE (?);`
   connection.query(sql, value, (err, result) => {
@@ -174,7 +180,7 @@ expertsRouter.post('/test', (req, res) => {
       res.status(500).send('Error requesting POST experts')
     } else {
       const id = result.insertId
-      const newItem = {id:id, value:value, label:value} 
+      const newItem = { id: id, value: value, label: value }
       res.status(200).json(newItem)
     }
   })
@@ -220,14 +226,13 @@ expertsRouter.post('/', (req, res) => {
     cost,
     keywords,
     jobtitle_id
-  ]  
+  ]
 
   let sql =
     'INSERT INTO experts (firstname, lastname, email, phone, company_id, linkedinProfile, price, numExpert, kindOfExpert_id, practice_id, expertiseLevel_id, feedbackExpert, cost, keywords, jobtitle_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
   let sql2 =
     'INSERT INTO experts_has_languages (experts_id, languages_id) VALUES ?;'
-  let sql3 =
-    'INSERT INTO past_companies (experts_id, pastCompany_id) VALUES ?;'
+  let sql3 = 'INSERT INTO past_companies (experts_id, pastCompany_id) VALUES ?;'
   let sql4 =
     'INSERT INTO experts_has_contacttype (experts_id, contactType_id) VALUES ?;'
   let sql5 =
@@ -243,7 +248,7 @@ expertsRouter.post('/', (req, res) => {
       let lan = []
       for (let i = 0; i < languages_id.length; i++) {
         lan.push([id, languages_id[i]])
-      }    
+      }
       connection.query(sql2, [lan], (err, result) => {
         if (err) {
           console.error(err)
@@ -251,7 +256,7 @@ expertsRouter.post('/', (req, res) => {
         } else {
           let pcom = []
           for (let i = 0; i < pastCompany_id.length; i++) {
-          pcom.push([id, pastCompany_id[i]])
+            pcom.push([id, pastCompany_id[i]])
           }
           connection.query(sql3, [pcom], (err, result) => {
             if (err) {
@@ -278,14 +283,14 @@ expertsRouter.post('/', (req, res) => {
                     } else {
                       let pjt = []
                       for (let i = 0; i < projects_id.length; i++) {
-                      pjt.push([id, projects_id[i]])
+                        pjt.push([id, projects_id[i]])
                       }
                       connection.query(sql6, [pjt], (err, result) => {
                         if (err) {
                           console.error(err)
                           res.status(500).send('Error requesting POST6 experts')
                         } else {
-                        res.status(200).json(result)
+                          res.status(200).json(result)
                         }
                       })
                     }
