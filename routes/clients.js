@@ -14,4 +14,77 @@ clientsRouter.get('/', (req, res) => {
   })
 })
 
+clientsRouter.post('/', (req, res) => {
+  const {
+    firstname,
+    lastname,
+    email,
+    phone,
+    city,
+    feedbackClient,
+    companyType_id,
+    company_id,
+    numClients,
+    contactType_id,
+    clients_id,
+    languages_id,
+    service_id
+  } = req.body
+
+  let datas = [
+    firstname,
+    lastname,
+    email,
+    phone,
+    city,
+    feedbackClient,
+    numClients,
+    companyType_id,
+    company_id
+  ]
+
+  let sql =
+    'INSERT INTO clients (firstname, lastname , email, phone, city, feedbackClient, numClients, companyType_id, company_id) VALUES (?,?,?,?,?,?,?,?,?);'
+  let sql2 =
+    'INSERT INTO clients_has_contacttype (clients_id, contactType_id) VALUES (?,?);'
+  let sql3 =
+    'INSERT INTO clients_has_languages (clients_id, languages_id) VALUES (?,?);'
+  let sql4 =
+    'INSERT INTO clients_has_service (clients_id, service_id) VALUES (?,?);'
+
+  connection.query(sql, datas, (err, result) => {
+    if (err) {
+      console.error(err)
+      res.status(500).send('Error requesting POST clients')
+    } else {
+      const id = result.insertId
+      let datas2 = [id, contactType_id]
+      connection.query(sql2, datas2, (err2, result2) => {
+        if (err2) {
+          console.error(err2)
+          res.status(500).send('Error requesting POST2 clients')
+        } else {
+          let datas3 = [id, languages_id]
+          connection.query(sql3, datas3, (err3, result3) => {
+            if (err3) {
+              console.error(err3)
+              res.status(500).send('Error requesting POST3 clients')
+            } else {
+              let datas4 = [id, service_id]
+              connection.query(sql4, datas4, (err4, result4) => {
+                if (err4) {
+                  console.error(err4)
+                  res.status(500).send('Error requesting POST4 clients')
+                } else {
+                  res.status(200).json(result)
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
 module.exports = clientsRouter
