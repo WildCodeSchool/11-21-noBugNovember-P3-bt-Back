@@ -10,7 +10,7 @@ const routes = require('./routes/index')
 const connection = require('./config/db.js')
 
 const app = express()
-const port = process.env.PORT || 4040
+const port = process.env.PORT || 4242
 
 connection.connect(err => {
   if (err) {
