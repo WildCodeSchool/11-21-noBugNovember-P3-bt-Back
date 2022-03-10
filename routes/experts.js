@@ -1,9 +1,10 @@
 const expertsRouter = require('express').Router()
+const { send } = require('express/lib/response')
 const connection = require('../config/db.js')
 
 expertsRouter.get('/', (req, res) => {
   let sql =
-    "SELECT e.id, e.numExpert, e.firstname, e.lastname, e.phone, e.email, e.linkedinProfile, koe.kindOfExpertName, p.practiceType, el.expertiseLevelName, c.companyName,  e.price, e.cost, e.keywords, jt.jobTitleName, e.feedbackExpert, (SELECT ehp.answer WHERE projects.status_id != 3) AS answer, (SELECT projects.projectTitle WHERE projects.status_id != 3) AS projet, (SELECT ehp.preferedItwDay WHERE projects.status_id != 3) AS itwday, group_concat(DISTINCT la.languagesName SEPARATOR ' , ') AS languages, group_concat(DISTINCT company.companyName SEPARATOR ' , ') AS pastCompanies, group_concat(DISTINCT  ct.contactTypeName SEPARATOR ' , ') AS  contact, group_concat(DISTINCT  ge.geoExpertiseName SEPARATOR ' , ') AS  geoExpertiseName FROM experts AS e LEFT JOIN experts_has_contacttype AS ect ON ect.experts_id = e.id LEFT JOIN contactType AS ct ON ect.contacttype_id = ct.id LEFT JOIN kindofexpert AS koe ON e.kindOfExpert_id = koe.id LEFT JOIN practice AS p ON e.practice_id = p.id LEFT JOIN expertiselevel AS el ON e.expertiseLevel_id = el.id LEFT JOIN company AS c ON e.company_id = c.id LEFT JOIN experts_has_geoexpertise AS ege ON ege.experts_id = e.id LEFT JOIN geoexpertise AS ge ON ege.geoExpertise_id = ge.id LEFT JOIN experts_has_languages AS ela ON ela.experts_id = e.id LEFT JOIN languages AS la ON ela.languages_id = la.id LEFT JOIN past_companies AS pc ON pc.experts_id = e.id LEFT JOIN company ON pc.pastCompany_id = company.id LEFT JOIN jobtitle AS jt ON e.jobtitle_id = jt.id LEFT JOIN experts_has_projects AS ehp ON ehp.experts_id = e.id LEFT JOIN projects ON ehp.projects_id = projects.id WHERE e.numExpert IN (SELECT e.numExpert FROM experts AS e) GROUP BY e.numExpert"
+    "SELECT e.id, e.numExpert, e.firstname, e.lastname, e.phone, e.email, e.linkedinProfile, koe.kindOfExpertName, p.practiceType, el.expertiseLevelName, c.companyName,  e.price, e.cost, e.keywords, jt.jobTitleName, e.feedbackExpert, (SELECT ehp.answer WHERE projects.status_id != 3) AS answer, (SELECT projects.projectTitle WHERE projects.status_id != 3) AS projet, (SELECT ehp.preferedItwDay WHERE projects.status_id != 3) AS itwday, group_concat(DISTINCT la.languagesName SEPARATOR ' , ') AS languages, group_concat(DISTINCT company.companyName SEPARATOR ' , ') AS pastCompanies, group_concat(DISTINCT  ct.contactTypeName SEPARATOR ' , ') AS  contact, group_concat(DISTINCT  ge.geoExpertiseName SEPARATOR ' , ') AS  geoExpertiseName, group_concat(DISTINCT  i.industryName SEPARATOR ' , ') AS  industry FROM experts AS e LEFT JOIN experts_has_contacttype AS ect ON ect.experts_id = e.id LEFT JOIN contactType AS ct ON ect.contacttype_id = ct.id LEFT JOIN kindofexpert AS koe ON e.kindOfExpert_id = koe.id LEFT JOIN practice AS p ON e.practice_id = p.id LEFT JOIN expertiselevel AS el ON e.expertiseLevel_id = el.id LEFT JOIN company AS c ON e.company_id = c.id LEFT JOIN experts_has_geoexpertise AS ege ON ege.experts_id = e.id LEFT JOIN geoexpertise AS ge ON ege.geoExpertise_id = ge.id LEFT JOIN experts_has_languages AS ela ON ela.experts_id = e.id LEFT JOIN languages AS la ON ela.languages_id = la.id LEFT JOIN past_companies AS pc ON pc.experts_id = e.id LEFT JOIN company ON pc.pastCompany_id = company.id LEFT JOIN jobtitle AS jt ON e.jobtitle_id = jt.id LEFT JOIN experts_has_projects AS ehp ON ehp.experts_id = e.id LEFT JOIN experts_has_industry AS ehi ON ehi.experts_id = e.id LEFT JOIN industry AS i ON ehi.industry_id = i.id LEFT JOIN projects ON ehp.projects_id = projects.id WHERE e.numExpert IN (SELECT e.numExpert FROM experts AS e) GROUP BY e.numExpert"
   connection.query(sql, (err, result) => {
     if (err) {
       console.error(err)
@@ -15,8 +16,6 @@ expertsRouter.get('/', (req, res) => {
 })
 
 expertsRouter.get('/form', (req, res) => {
-  console.log('test form')
-
   let sqllan = 'SELECT id,languagesName FROM languages;'
   let sqlgeo = 'SELECT id, geoExpertiseName FROM geoexpertise;'
   let sqlkoe = 'SELECT id, kindOfExpertName FROM kindofexpert; '
@@ -26,6 +25,7 @@ expertsRouter.get('/form', (req, res) => {
   let sqlcie = 'SELECT id, companyName FROM company;'
   let sqlctc = 'SELECT id, contactTypeName FROM contacttype;'
   let sqlpjt = 'SELECT id, projectTitle FROM projects; '
+  let sqlindu = 'SELECT id, industryName FROM industry; '
   let languages = []
   let geoExpertise = []
   let kindOfExpert = []
@@ -35,6 +35,7 @@ expertsRouter.get('/form', (req, res) => {
   let companies = []
   let contactType = []
   let projects = []
+  let industry = []
 
   connection.query(sqllan, (errlan, resultlan) => {
     if (errlan) {
@@ -138,18 +139,37 @@ expertsRouter.get('/form', (req, res) => {
                                             label: pjt.projectTitle
                                           })
                                         )
-                                        const options = {
-                                          languages: [...languages],
-                                          geoExpertise: [...geoExpertise],
-                                          kindOfExpert: [...kindOfExpert],
-                                          expertiseLevel: [...expertiseLevel],
-                                          practice: [...practice],
-                                          jobTitle: [...jobTitle],
-                                          companies: [...companies],
-                                          contactType: [...contactType],
-                                          projects: [...projects]
-                                        }
-                                        res.status(200).json(options)
+                                        connection.query(
+                                          sqlindu,
+                                          (errindu, resultindu) => {
+                                            if (errindu) {
+                                              console.error(errindu)
+                                            } else {
+                                              resultindu.forEach(indu =>
+                                                industry.push({
+                                                  id: indu.id,
+                                                  value: indu.industryName,
+                                                  label: indu.industryName
+                                                })
+                                              )
+                                              const options = {
+                                                languages: [...languages],
+                                                geoExpertise: [...geoExpertise],
+                                                kindOfExpert: [...kindOfExpert],
+                                                expertiseLevel: [
+                                                  ...expertiseLevel
+                                                ],
+                                                practice: [...practice],
+                                                jobTitle: [...jobTitle],
+                                                companies: [...companies],
+                                                contactType: [...contactType],
+                                                projects: [...projects],
+                                                industry: [...industry]
+                                              }
+                                              res.status(200).json(options)
+                                            }
+                                          }
+                                        )
                                       }
                                     }
                                   )
@@ -174,30 +194,117 @@ expertsRouter.get('/form', (req, res) => {
 expertsRouter.get('/form/:id', (req, res) => {
   let id = req.params.id
   let sql =
-    "SELECT e.id, e.numExpert, e.firstname, e.lastname, e.phone, e.email, e.linkedinProfile, koe.kindOfExpertName, p.practiceType, el.expertiseLevelName, c.companyName,  e.price, e.cost, e.keywords, jt.jobTitleName, e.feedbackExpert, (SELECT ehp.answer WHERE projects.status_id != 3) AS answer, (SELECT projects.projectTitle WHERE projects.status_id != 3) AS projet, (SELECT ehp.preferedItwDay WHERE projects.status_id != 3) AS itwday, group_concat(DISTINCT la.languagesName SEPARATOR ' , ') AS languages, group_concat(DISTINCT company.companyName SEPARATOR ' , ') AS pastCompanies, group_concat(DISTINCT  ct.contactTypeName SEPARATOR ' , ') AS  contact, group_concat(DISTINCT  ge.geoExpertiseName SEPARATOR ' , ') AS  geoExpertiseName FROM experts AS e LEFT JOIN experts_has_contacttype AS ect ON ect.experts_id = e.id LEFT JOIN contactType AS ct ON ect.contacttype_id = ct.id LEFT JOIN kindofexpert AS koe ON e.kindOfExpert_id = koe.id LEFT JOIN practice AS p ON e.practice_id = p.id LEFT JOIN expertiselevel AS el ON e.expertiseLevel_id = el.id LEFT JOIN company AS c ON e.company_id = c.id LEFT JOIN experts_has_geoexpertise AS ege ON ege.experts_id = e.id LEFT JOIN geoexpertise AS ge ON ege.geoExpertise_id = ge.id LEFT JOIN experts_has_languages AS ela ON ela.experts_id = e.id LEFT JOIN languages AS la ON ela.languages_id = la.id LEFT JOIN past_companies AS pc ON pc.experts_id = e.id LEFT JOIN company ON pc.pastCompany_id = company.id LEFT JOIN jobtitle AS jt ON e.jobtitle_id = jt.id LEFT JOIN experts_has_projects AS ehp ON ehp.experts_id = e.id LEFT JOIN projects ON ehp.projects_id = projects.id WHERE e.numExpert IN (SELECT e.numExpert FROM experts AS e) AND e.id = ? GROUP BY e.numExpert "
+    "SELECT e.id, e.numExpert, e.firstname, e.lastname, e.phone, e.email, e.linkedinProfile, koe.kindOfExpertName, p.practiceType, el.expertiseLevelName, c.companyName,  e.price, e.cost, e.keywords, jt.jobTitleName, e.feedbackExpert, (SELECT ehp.answer WHERE projects.status_id != 3) AS answer, (SELECT projects.projectTitle WHERE projects.status_id != 3) AS project, (SELECT ehp.preferedItwDay WHERE projects.status_id != 3) AS itwday, group_concat(DISTINCT la.languagesName SEPARATOR ' , ') AS languages, group_concat(DISTINCT company.companyName SEPARATOR ' , ') AS pastCompanies, group_concat(DISTINCT  ct.contactTypeName SEPARATOR ' , ') AS  contact, group_concat(DISTINCT  ge.geoExpertiseName SEPARATOR ' , ') AS  geoExpertiseName FROM experts AS e LEFT JOIN experts_has_contacttype AS ect ON ect.experts_id = e.id LEFT JOIN contactType AS ct ON ect.contacttype_id = ct.id LEFT JOIN kindofexpert AS koe ON e.kindOfExpert_id = koe.id LEFT JOIN practice AS p ON e.practice_id = p.id LEFT JOIN expertiselevel AS el ON e.expertiseLevel_id = el.id LEFT JOIN company AS c ON e.company_id = c.id LEFT JOIN experts_has_geoexpertise AS ege ON ege.experts_id = e.id LEFT JOIN geoexpertise AS ge ON ege.geoExpertise_id = ge.id LEFT JOIN experts_has_languages AS ela ON ela.experts_id = e.id LEFT JOIN languages AS la ON ela.languages_id = la.id LEFT JOIN past_companies AS pc ON pc.experts_id = e.id LEFT JOIN company ON pc.pastCompany_id = company.id LEFT JOIN jobtitle AS jt ON e.jobtitle_id = jt.id LEFT JOIN experts_has_projects AS ehp ON ehp.experts_id = e.id LEFT JOIN projects ON ehp.projects_id = projects.id WHERE e.numExpert IN (SELECT e.numExpert FROM experts AS e) AND e.id = ? GROUP BY e.numExpert "
   connection.query(sql, id, (err, result) => {
     if (err) {
       console.error(err)
       res.status(500).send('Error requesting GET experts')
     } else {
-      console.log('result', result)
       const id = result[0].id
-      console.log('id', id)
+      const numExpert = result[0].numExpert
+      const firstname = result[0].firstname
+      const lastname = result[0].lastname
+      const phone = result[0].phone
+      const email = result[0].email
+      const linkedinProfile = result[0].linkedinProfile
+      const kindOfExpertName = [
+        { value: result[0].kindOfExpertName, label: result[0].kindOfExpertName }
+      ]
+      let contact = []
+      if (result[0].contact) {
+        const contactArr = result[0].contact.split(' , ')
+        for (let i = 0; i < contactArr.length; i++) {
+          contact.push({ value: contactArr[i], label: contactArr[i] })
+        }
+      }
+      let projects = []
+      if (result[0].project) {
+        const pjtArr = result[0].project.split(' , ')
+        for (let i = 0; i < pjtArr.length; i++) {
+          projects.push({ value: pjtArr[i], label: pjtArr[i] })
+        }
+      }
+      const practiceType = [
+        { value: result[0].practiceType, label: result[0].practiceType }
+      ]
+      let geoExpertiseName = []
+      if (result[0].geoExpertiseName) {
+        const geoExpertiseNameArr = result[0].geoExpertiseName.split(' , ')
+        for (let i = 0; i < geoExpertiseNameArr.length; i++) {
+          geoExpertiseName.push({
+            value: geoExpertiseNameArr[i],
+            label: geoExpertiseNameArr[i]
+          })
+        }
+      }
       const company = [
         { value: result[0].companyName, label: result[0].companyName }
       ]
-      console.log('company', result)
-      const datas = { id: id, company: [...company] }
-      console.log('datas', datas)
+      let pastCompanies = []
+      if (result[0].pastCompanies) {
+        const pcieArr = result[0].pastCompanies.split(' , ')
+        for (let i = 0; i < pcieArr.length; i++) {
+          pastCompanies.push({ value: pcieArr[i], label: pcieArr[i] })
+        }
+      }
+      const price = result[0].price
+      const cost = result[0].cost
+      const feedbackExpert = result[0].feedbackExpert
+      const expertiseLevelName = [
+        {
+          value: result[0].expertiseLevelName,
+          label: result[0].expertiseLevelName
+        }
+      ]
+      let languages = []
+      if (result[0].languages) {
+        const languagesArr = result[0].languages.split(' , ')
+        for (let i = 0; i < languagesArr.length; i++) {
+          languages.push({ value: languagesArr[i], label: languagesArr[i] })
+        }
+      }
+      let jobTitleName = []
+      if (result[0].jobTitleName) {
+        const jobTitleNameArr = result[0].jobTitleName.split(' , ')
+        for (let i = 0; i < jobTitleNameArr.length; i++) {
+          jobTitleName.push({
+            value: jobTitleNameArr[i],
+            label: jobTitleNameArr[i]
+          })
+        }
+      }
+      const keywords = result[0].keywords
+
+      const datas = {
+        id: id,
+        numExpert: numExpert,
+        firstname: firstname,
+        lastname: lastname,
+        phone: phone,
+        email: email,
+        linkedinProfile: linkedinProfile,
+        kindOfExpert: [...kindOfExpertName],
+        practice: [...practiceType],
+        company: [...company],
+        price: price,
+        cost: cost,
+        feedbackExpert: feedbackExpert,
+        expertiseLevel: [...expertiseLevelName],
+        languages: languages,
+        pastCompanies: pastCompanies,
+        jobTitleName: jobTitleName,
+        geoExpertiseName: geoExpertiseName,
+        projects: projects,
+        contact: contact,
+        keywords: keywords
+      }
       res.status(200).json(datas)
     }
   })
 })
 
 expertsRouter.post('/test', (req, res) => {
-  console.log('body', req.body)
   const { table, column, value } = req.body
-  console.log(value)
   let sql = `INSERT INTO ${table} (${column}) VALUE (?);`
   connection.query(sql, value, (err, result) => {
     if (err) {
@@ -232,7 +339,8 @@ expertsRouter.post('/', (req, res) => {
     pastCompany_id,
     contactType_id,
     geoExpertise_id,
-    projects_id
+    projects_id,
+    industry_id
   } = req.body
 
   let datas = [
@@ -250,7 +358,8 @@ expertsRouter.post('/', (req, res) => {
     feedbackExpert,
     cost,
     keywords,
-    jobtitle_id
+    jobtitle_id,
+    industry_id
   ]
 
   let sql =
@@ -264,6 +373,8 @@ expertsRouter.post('/', (req, res) => {
     'INSERT INTO experts_has_geoexpertise (experts_id, geoExpertise_id) VALUES ?;'
   let sql6 =
     'INSERT INTO experts_has_projects (experts_id, projects_id) VALUES ?;'
+  let sql7 =
+    'INSERT INTO experts_has_industry (experts_id, industry_id) VALUES ?;'
   connection.query(sql, datas, (err, result) => {
     if (err) {
       console.error(err)
@@ -315,7 +426,20 @@ expertsRouter.post('/', (req, res) => {
                           console.error(err)
                           res.status(500).send('Error requesting POST6 experts')
                         } else {
-                          res.status(200).json(result)
+                          let indu = []
+                          for (let i = 0; i < industry_id.length; i++) {
+                            indu.push([id, industry_id[i]])
+                          }
+                          connection.query(sql7, [indu], (err, result) => {
+                            if (err) {
+                              console.error(err)
+                              res
+                                .status(500)
+                                .send('Error requesting POST7 experts')
+                            } else {
+                              res.status(200).json(result)
+                            }
+                          })
                         }
                       })
                     }
@@ -328,6 +452,64 @@ expertsRouter.post('/', (req, res) => {
       })
     }
   })
+})
+
+expertsRouter.put('/form/:id', async (req, res) => {
+  const id = req.params.id
+  const sqlData1 = {
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    email: req.body.email,
+    phone: req.body.phone,
+    company_id: req.body.company_id,
+    linkedinProfile: req.body.linkedinProfile,
+    price: req.body.price,
+    numExpert: req.body.numExpert,
+    kindOfExpert_id: req.body.kindOfExpert_id,
+    practice_id: req.body.practice_id,
+    expertiseLevel_id: req.body.expertiseLevel_id,
+    feedbackExpert: req.body.feedbackExpert,
+    cost: req.body.cost,
+    keywords: req.body.keywords,
+    jobtitle_id: req.body.jobtitle_id
+  }
+  console.log('data1', sqlData1)
+  const datas = Object.entries(sqlData1)
+
+  console.log('datas', datas)
+
+  let sqlExport = `UPDATE experts SET `
+  let myArray = datas
+    .filter(element => element[1] !== '')
+    .filter(element => element[1].length != 0)
+    .filter(element => element[1].length != null)
+
+  await myArray.map((array, i, arr) => {
+    if (i < arr.length - 1) {
+      sqlExport += `${array[0]} = ${array[1]}, `
+    } else {
+      sqlExport += `${array[0]} = ${array[1]} `
+    }
+  })
+
+  sqlExport += `WHERE id = ${id};`
+
+  console.log('my array', myArray, 'sql Export', sqlExport)
+
+  res.send(200)
+
+  let sql =
+    'UPDATE experts SET firstname, lastname, email, phone, company_id, linkedinProfile, price, numExpert, kindOfExpert_id, practice_id, expertiseLevel_id, feedbackExpert, cost, keywords, jobtitle_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+
+  let sql2 =
+    'INSERT INTO experts_has_languages (experts_id, languages_id) VALUES ?;'
+  let sql3 = 'INSERT INTO past_companies (experts_id, pastCompany_id) VALUES ?;'
+  let sql4 =
+    'INSERT INTO experts_has_contacttype (experts_id, contactType_id) VALUES ?;'
+  let sql5 =
+    'INSERT INTO experts_has_geoexpertise (experts_id, geoExpertise_id) VALUES ?;'
+  let sql6 =
+    'INSERT INTO experts_has_projects (experts_id, projects_id) VALUES ?;'
 })
 
 module.exports = expertsRouter
