@@ -15,15 +15,6 @@ expertsRouter.get('/', (req, res) => {
 })
 
 expertsRouter.get('/form', (req, res) => {
-<<<<<<< HEAD
-  let sqllan = 'SELECT la.languagesName FROM languages AS la;'
-  let sqlgeo = 'SELECT geo.geoExpertiseName FROM geoexpertise AS geo;'
-  let sqlkoe = 'SELECT koe.kindOfExpertName FROM kindofexpert AS koe; '
-  let sqlel = 'SELECT el.expertiseLevelName FROM expertiselevel AS el;'
-  let sqlpr = 'SELECT pr.practiceType FROM practice AS pr;'
-  let sqljob = 'SELECT job.jobTitleName FROM jobtitle AS job;'
-  let sqlcom = 'SELECT com.companyName FROM company AS com;'
-=======
   console.log('test form')
 
   let sqllan = 'SELECT id,languagesName FROM languages;'
@@ -35,20 +26,15 @@ expertsRouter.get('/form', (req, res) => {
   let sqlcie = 'SELECT id, companyName FROM company;'
   let sqlctc = 'SELECT id, contactTypeName FROM contacttype;'
   let sqlpjt = 'SELECT id, projectTitle FROM projects; '
->>>>>>> dev
   let languages = []
   let geoExpertise = []
   let kindOfExpert = []
   let expertiseLevel = []
   let practice = []
   let jobTitle = []
-<<<<<<< HEAD
-  let company = []
-=======
   let companies = []
   let contactType = []
   let projects = []
->>>>>>> dev
 
   connection.query(sqllan, (errlan, resultlan) => {
     if (errlan) {

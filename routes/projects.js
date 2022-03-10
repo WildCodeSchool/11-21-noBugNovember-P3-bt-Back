@@ -47,20 +47,20 @@ projectsRouter.get('/maxicard/:id', (req, res) => {
 
 // rajouter service
 projectsRouter.get('/form', (req, res) => {
-  let sqllan = 'SELECT la.languagesName FROM languages AS la;'
-  let sqlgeo = 'SELECT geo.geoExpertiseName FROM geoexpertise AS geo;'
-  let sqlkoe = 'SELECT koe.kindOfExpertName FROM kindofexpert AS koe; '
-  let sqlel = 'SELECT el.expertiseLevelName FROM expertiselevel AS el;'
-  let sqlpr = 'SELECT pr.practiceType FROM practice AS pr;'
-  let sqljob = 'SELECT job.jobTitleName FROM jobtitle AS job;'
-  let sqlind = 'SELECT ind.industryName FROM industry AS ind;'
-  let sqlpt = 'SELECT pt.projectTypeName FROM projecttype AS pt;'
-  let sqlfon = 'SELECT fon.fonctionName FROM fonction AS fon;'
-  let sqllin = 'SELECT lin.linkedinKey FROM linkedinkeywords AS lin;'
-  let sqlst = 'SELECT st.status FROM status AS st;'
-  let sqlcom = 'SELECT com.companyName FROM company AS com;'
-  let sqlcl = 'SELECT cl.numClients FROM clients AS cl'
-  let sqlse = 'SELECT se.serviceName FROM service AS se'
+  let sqllan = 'SELECT id, languagesName FROM languages;'
+  let sqlgeo = 'SELECT id, geoExpertiseName FROM geoexpertise;'
+  let sqlkoe = 'SELECT id, kindOfExpertName FROM kindofexpert; '
+  let sqlel = 'SELECT id, expertiseLevelName FROM expertiselevel;'
+  let sqlpr = 'SELECT id, practiceType FROM practice;'
+  let sqljob = 'SELECT id, jobTitleName FROM jobtitle;'
+  let sqlind = 'SELECT id, industryName FROM industry;'
+  let sqlpt = 'SELECT id, projectTypeName FROM projecttype;'
+  let sqlfon = 'SELECT id, fonctionName FROM fonction;'
+  let sqllin = 'SELECT id, linkedinKey FROM linkedinkeywords'
+  let sqlst = 'SELECT id, status FROM status;'
+  let sqlcom = 'SELECT id, companyName FROM company;'
+  let sqlcl = 'SELECT id, numClients FROM clients'
+  let sqlse = 'SELECT id, serviceName FROM service'
   let languages = []
   let geoExpertise = []
   let kindOfExpert = []
@@ -82,7 +82,11 @@ projectsRouter.get('/form', (req, res) => {
       res.status(500).send('Error retrieving form datas')
     } else {
       resultlan.forEach(la =>
-        languages.push({ value: la.languagesName, label: la.languagesName })
+        languages.push({
+          id: la.id,
+          value: la.languagesName,
+          label: la.languagesName
+        })
       )
       connection.query(sqlgeo, (errgeo, resultgeo) => {
         if (errgeo) {
@@ -90,6 +94,7 @@ projectsRouter.get('/form', (req, res) => {
         } else {
           resultgeo.forEach(geo =>
             geoExpertise.push({
+              id: geo.id,
               value: geo.geoExpertiseName,
               label: geo.geoExpertiseName
             })
@@ -100,6 +105,7 @@ projectsRouter.get('/form', (req, res) => {
             } else {
               resultkoe.forEach(koe =>
                 kindOfExpert.push({
+                  id: koe.id,
                   value: koe.kindOfExpertName,
                   label: koe.kindOfExpertName
                 })
@@ -110,6 +116,7 @@ projectsRouter.get('/form', (req, res) => {
                 } else {
                   resultel.forEach(el =>
                     expertiseLevel.push({
+                      id: el.id,
                       value: el.expertiseLevelName,
                       label: el.expertiseLevelName
                     })
@@ -120,6 +127,7 @@ projectsRouter.get('/form', (req, res) => {
                     } else {
                       resultpr.forEach(pr =>
                         practice.push({
+                          id: pr.id,
                           value: pr.practiceType,
                           label: pr.practiceType
                         })
@@ -130,6 +138,7 @@ projectsRouter.get('/form', (req, res) => {
                         } else {
                           resultjob.forEach(job =>
                             jobTitle.push({
+                              id: job.id,
                               value: job.jobTitleName,
                               label: job.jobTitleName
                             })
@@ -140,6 +149,7 @@ projectsRouter.get('/form', (req, res) => {
                             } else {
                               resultind.forEach(ind =>
                                 industry.push({
+                                  id: ind.id,
                                   value: ind.industryName,
                                   label: ind.industryName
                                 })
@@ -150,6 +160,7 @@ projectsRouter.get('/form', (req, res) => {
                                 } else {
                                   resultpt.forEach(pt =>
                                     projectType.push({
+                                      id: pt.id,
                                       value: pt.projectTypeName,
                                       label: pt.projectTypeName
                                     })
@@ -162,6 +173,7 @@ projectsRouter.get('/form', (req, res) => {
                                       } else {
                                         resultfon.forEach(fon =>
                                           fonction.push({
+                                            id: fon.id,
                                             value: fon.fonctionName,
                                             label: fon.fonctionName
                                           })
@@ -174,6 +186,7 @@ projectsRouter.get('/form', (req, res) => {
                                             } else {
                                               resultlin.forEach(lin =>
                                                 linkedin.push({
+                                                  id: lin.id,
                                                   value: lin.linkedinKey,
                                                   label: lin.linkedinKey
                                                 })
@@ -186,6 +199,7 @@ projectsRouter.get('/form', (req, res) => {
                                                   } else {
                                                     resultst.forEach(st =>
                                                       status.push({
+                                                        id: st.id,
                                                         value: st.status,
                                                         label: st.status
                                                       })
@@ -199,6 +213,7 @@ projectsRouter.get('/form', (req, res) => {
                                                           resultcom.forEach(
                                                             com =>
                                                               company.push({
+                                                                id: com.id,
                                                                 value:
                                                                   com.companyName,
                                                                 label:
@@ -220,6 +235,7 @@ projectsRouter.get('/form', (req, res) => {
                                                                   cl =>
                                                                     client.push(
                                                                       {
+                                                                        id: cl.id,
                                                                         value:
                                                                           cl.numClients,
                                                                         label:
@@ -242,6 +258,7 @@ projectsRouter.get('/form', (req, res) => {
                                                                         se =>
                                                                           service.push(
                                                                             {
+                                                                              id: se.id,
                                                                               value:
                                                                                 se.serviceName,
                                                                               label:
@@ -420,6 +437,7 @@ projectsRouter.post('/', (req, res) => {
       res.status(500).send('Error requesting POST projects')
     } else {
       const id = result.insertId
+      let ecom = []
       let datas2 = [id, excludedCompany_id]
       connection.query(sql2, datas2, (err, result) => {
         if (err) {
