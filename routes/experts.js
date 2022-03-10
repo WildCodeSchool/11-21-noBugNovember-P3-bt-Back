@@ -21,12 +21,14 @@ expertsRouter.get('/form', (req, res) => {
   let sqlel = 'SELECT el.expertiseLevelName FROM expertiselevel AS el;'
   let sqlpr = 'SELECT pr.practiceType FROM practice AS pr;'
   let sqljob = 'SELECT job.jobTitleName FROM jobtitle AS job;'
+  let sqlcom = 'SELECT com.companyName FROM company AS com;'
   let languages = []
   let geoExpertise = []
   let kindOfExpert = []
   let expertiseLevel = []
   let practice = []
   let jobTitle = []
+  let company = []
 
   connection.query(sqllan, (errlan, resultlan) => {
     if (errlan) {
@@ -86,15 +88,28 @@ expertsRouter.get('/form', (req, res) => {
                               label: job.jobTitleName
                             })
                           )
-                          const options = {
-                            languages: [...languages],
-                            geoExpertise: [...geoExpertise],
-                            kindOfExpert: [...kindOfExpert],
-                            expertiseLevel: [...expertiseLevel],
-                            practice: [...practice],
-                            jobTitle: [...jobTitle]
-                          }
-                          res.status(200).json(options)
+                          connection.query(sqlcom, (errcom, resultcom) => {
+                            if (errcom) {
+                              console.error(errcom)
+                            } else {
+                              resultcom.forEach(com =>
+                                company.push({
+                                  value: com.companyName,
+                                  label: com.companyName
+                                })
+                              )
+                              const options = {
+                                languages: [...languages],
+                                geoExpertise: [...geoExpertise],
+                                kindOfExpert: [...kindOfExpert],
+                                expertiseLevel: [...expertiseLevel],
+                                practice: [...practice],
+                                jobTitle: [...jobTitle],
+                                company: [...company]
+                              }
+                              res.status(200).json(options)
+                            }
+                          })
                         }
                       })
                     }

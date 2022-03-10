@@ -30,6 +30,7 @@ projectsRouter.get('/midicard/:id', (req, res) => {
   })
 })
 
+// rajouter service has projects
 projectsRouter.get('/maxicard/:id', (req, res) => {
   let sql =
     'SELECT p.id, p.projectTitle, p.numProject, p.clientComment, p.totalPrice, p.itwStart, p.itwDeadline, p.quantityExpert, s.status, el.expertiseLevelName, group_concat(DISTINCT pt.projectTypeName) AS projectType,  group_concat(DISTINCT k.kindOfExpertName) AS kindOfExpert, group_concat(DISTINCT pr.practiceType) AS practice, group_concat(DISTINCT i.industryName) AS industry, group_concat(DISTINCT rc.companyName) AS recommend_company, group_concat(DISTINCT ec.companyName) AS exclude_company, group_concat(DISTINCT j.jobTitleName) AS jobTitle, group_concat(DISTINCT f.fonctionName) AS fonction, group_concat(DISTINCT g.geoExpertiseName) AS geoExpertise, group_concat(DISTINCT l.languagesName) AS languages, group_concat(DISTINCT lk.linkedinKey) AS linkedin FROM projects AS p INNER JOIN status AS s ON s.id=p.status_id INNER JOIN expertiselevel AS el ON el.id = p.expertiseLevel_id INNER JOIN projects_has_projecttype ON p.id = projects_has_projecttype.projects_id INNER JOIN projecttype AS pt ON pt.id = projects_has_projecttype.projectType_id INNER JOIN kindofexpert_has_projects ON p.id = kindofexpert_has_projects.projects_id INNER JOIN kindofexpert AS k ON k.id = kindofexpert_has_projects.kindOfExpert_id INNER JOIN projects_has_practice ON p.id = projects_has_practice.projects_id INNER JOIN practice AS pr ON pr.id = projects_has_practice.practice_id INNER JOIN projects_need_industry ON p.id = projects_need_industry.projects_id INNER JOIN industry AS i ON i.id = projects_need_industry.industry_id LEFT JOIN projects_recommend_company ON p.id = projects_recommend_company.projects_id LEFT JOIN company AS rc ON rc.id = projects_recommend_company.company_id LEFT JOIN projects_exclude_company ON p.id = projects_exclude_company.projects_id LEFT JOIN company AS ec ON ec.id = projects_exclude_company.company_id INNER JOIN projects_has_jobtitle ON p.id = projects_has_jobtitle.projects_id INNER JOIN jobtitle AS j ON j.id = projects_has_jobtitle.jobTitle_id INNER JOIN projects_need_fonction ON p.id = projects_need_fonction.projects_id INNER JOIN fonction AS f ON f.id = projects_need_fonction.fonction_id INNER JOIN projects_need_geoexpertise ON p.id = projects_need_geoexpertise.projects_id INNER JOIN geoexpertise AS g ON g.id = projects_need_geoexpertise.geoExpertise_id INNER JOIN languages_has_projects ON p.id = languages_has_projects.projects_id INNER JOIN languages AS l ON l.id = languages_has_projects.languages_id INNER JOIN linkedinkeywords_has_projects ON p.id = linkedinkeywords_has_projects.projects_id INNER JOIN linkedinkeywords AS lk ON lk.id = linkedinkeywords_has_projects.linkedinKeywords_id WHERE p.id = ? GROUP BY p.projectTitle'
@@ -44,38 +45,335 @@ projectsRouter.get('/maxicard/:id', (req, res) => {
   })
 })
 
+// rajouter service
+projectsRouter.get('/form', (req, res) => {
+  let sqllan = 'SELECT la.languagesName FROM languages AS la;'
+  let sqlgeo = 'SELECT geo.geoExpertiseName FROM geoexpertise AS geo;'
+  let sqlkoe = 'SELECT koe.kindOfExpertName FROM kindofexpert AS koe; '
+  let sqlel = 'SELECT el.expertiseLevelName FROM expertiselevel AS el;'
+  let sqlpr = 'SELECT pr.practiceType FROM practice AS pr;'
+  let sqljob = 'SELECT job.jobTitleName FROM jobtitle AS job;'
+  let sqlind = 'SELECT ind.industryName FROM industry AS ind;'
+  let sqlpt = 'SELECT pt.projectTypeName FROM projecttype AS pt;'
+  let sqlfon = 'SELECT fon.fonctionName FROM fonction AS fon;'
+  let sqllin = 'SELECT lin.linkedinKey FROM linkedinkeywords AS lin;'
+  let sqlst = 'SELECT st.status FROM status AS st;'
+  let sqlcom = 'SELECT com.companyName FROM company AS com;'
+  let sqlcl = 'SELECT cl.numClients FROM clients AS cl'
+  let sqlse = 'SELECT se.serviceName FROM service AS se'
+  let languages = []
+  let geoExpertise = []
+  let kindOfExpert = []
+  let expertiseLevel = []
+  let practice = []
+  let jobTitle = []
+  let industry = []
+  let projectType = []
+  let fonction = []
+  let linkedin = []
+  let status = []
+  let company = []
+  let client = []
+  let service = []
+
+  connection.query(sqllan, (errlan, resultlan) => {
+    if (errlan) {
+      console.error(errlan)
+      res.status(500).send('Error retrieving form datas')
+    } else {
+      resultlan.forEach(la =>
+        languages.push({ value: la.languagesName, label: la.languagesName })
+      )
+      connection.query(sqlgeo, (errgeo, resultgeo) => {
+        if (errgeo) {
+          console.error(errgeo)
+        } else {
+          resultgeo.forEach(geo =>
+            geoExpertise.push({
+              value: geo.geoExpertiseName,
+              label: geo.geoExpertiseName
+            })
+          )
+          connection.query(sqlkoe, (errkoe, resultkoe) => {
+            if (errkoe) {
+              console.error(errkoe)
+            } else {
+              resultkoe.forEach(koe =>
+                kindOfExpert.push({
+                  value: koe.kindOfExpertName,
+                  label: koe.kindOfExpertName
+                })
+              )
+              connection.query(sqlel, (errel, resultel) => {
+                if (errel) {
+                  console.error(errel)
+                } else {
+                  resultel.forEach(el =>
+                    expertiseLevel.push({
+                      value: el.expertiseLevelName,
+                      label: el.expertiseLevelName
+                    })
+                  )
+                  connection.query(sqlpr, (errpr, resultpr) => {
+                    if (errpr) {
+                      console.error(errpr)
+                    } else {
+                      resultpr.forEach(pr =>
+                        practice.push({
+                          value: pr.practiceType,
+                          label: pr.practiceType
+                        })
+                      )
+                      connection.query(sqljob, (errjob, resultjob) => {
+                        if (errjob) {
+                          console.error(errjob)
+                        } else {
+                          resultjob.forEach(job =>
+                            jobTitle.push({
+                              value: job.jobTitleName,
+                              label: job.jobTitleName
+                            })
+                          )
+                          connection.query(sqlind, (errind, resultind) => {
+                            if (errind) {
+                              console.error(errind)
+                            } else {
+                              resultind.forEach(ind =>
+                                industry.push({
+                                  value: ind.industryName,
+                                  label: ind.industryName
+                                })
+                              )
+                              connection.query(sqlpt, (errpt, resultpt) => {
+                                if (errpt) {
+                                  console.error(errpt)
+                                } else {
+                                  resultpt.forEach(pt =>
+                                    projectType.push({
+                                      value: pt.projectTypeName,
+                                      label: pt.projectTypeName
+                                    })
+                                  )
+                                  connection.query(
+                                    sqlfon,
+                                    (errfon, resultfon) => {
+                                      if (errfon) {
+                                        console.error(errfon)
+                                      } else {
+                                        resultfon.forEach(fon =>
+                                          fonction.push({
+                                            value: fon.fonctionName,
+                                            label: fon.fonctionName
+                                          })
+                                        )
+                                        connection.query(
+                                          sqllin,
+                                          (errlin, resultlin) => {
+                                            if (errlin) {
+                                              console.error(errlin)
+                                            } else {
+                                              resultlin.forEach(lin =>
+                                                linkedin.push({
+                                                  value: lin.linkedinKey,
+                                                  label: lin.linkedinKey
+                                                })
+                                              )
+                                              connection.query(
+                                                sqlst,
+                                                (errst, resultst) => {
+                                                  if (errst) {
+                                                    console.error(errst)
+                                                  } else {
+                                                    resultst.forEach(st =>
+                                                      status.push({
+                                                        value: st.status,
+                                                        label: st.status
+                                                      })
+                                                    )
+                                                    connection.query(
+                                                      sqlcom,
+                                                      (errcom, resultcom) => {
+                                                        if (errcom) {
+                                                          console.error(errcom)
+                                                        } else {
+                                                          resultcom.forEach(
+                                                            com =>
+                                                              company.push({
+                                                                value:
+                                                                  com.companyName,
+                                                                label:
+                                                                  com.companyName
+                                                              })
+                                                          )
+                                                          connection.query(
+                                                            sqlcl,
+                                                            (
+                                                              errcl,
+                                                              resultcl
+                                                            ) => {
+                                                              if (errcl) {
+                                                                console.error(
+                                                                  errcl
+                                                                )
+                                                              } else {
+                                                                resultcl.forEach(
+                                                                  cl =>
+                                                                    client.push(
+                                                                      {
+                                                                        value:
+                                                                          cl.numClients,
+                                                                        label:
+                                                                          cl.numClients
+                                                                      }
+                                                                    )
+                                                                )
+                                                                connection.query(
+                                                                  sqlse,
+                                                                  (
+                                                                    errse,
+                                                                    resultse
+                                                                  ) => {
+                                                                    if (errse) {
+                                                                      console.error(
+                                                                        errse
+                                                                      )
+                                                                    } else {
+                                                                      resultse.forEach(
+                                                                        se =>
+                                                                          service.push(
+                                                                            {
+                                                                              value:
+                                                                                se.serviceName,
+                                                                              label:
+                                                                                se.serviceName
+                                                                            }
+                                                                          )
+                                                                      )
+                                                                      const options =
+                                                                        {
+                                                                          languages:
+                                                                            [
+                                                                              ...languages
+                                                                            ],
+                                                                          geoExpertise:
+                                                                            [
+                                                                              ...geoExpertise
+                                                                            ],
+                                                                          kindOfExpert:
+                                                                            [
+                                                                              ...kindOfExpert
+                                                                            ],
+                                                                          expertiseLevel:
+                                                                            [
+                                                                              ...expertiseLevel
+                                                                            ],
+                                                                          practice:
+                                                                            [
+                                                                              ...practice
+                                                                            ],
+                                                                          jobTitle:
+                                                                            [
+                                                                              ...jobTitle
+                                                                            ],
+                                                                          industry:
+                                                                            [
+                                                                              ...industry
+                                                                            ],
+                                                                          projectType:
+                                                                            [
+                                                                              ...projectType
+                                                                            ],
+                                                                          fonction:
+                                                                            [
+                                                                              ...fonction
+                                                                            ],
+                                                                          linkedin:
+                                                                            [
+                                                                              ...linkedin
+                                                                            ],
+                                                                          status:
+                                                                            [
+                                                                              ...status
+                                                                            ],
+                                                                          company:
+                                                                            [
+                                                                              ...company
+                                                                            ],
+                                                                          client:
+                                                                            [
+                                                                              ...client
+                                                                            ],
+                                                                          service:
+                                                                            [
+                                                                              ...service
+                                                                            ]
+                                                                        }
+                                                                      res
+                                                                        .status(
+                                                                          200
+                                                                        )
+                                                                        .json(
+                                                                          options
+                                                                        )
+                                                                    }
+                                                                  }
+                                                                )
+                                                              }
+                                                            }
+                                                          )
+                                                        }
+                                                      }
+                                                    )
+                                                  }
+                                                }
+                                              )
+                                            }
+                                          }
+                                        )
+                                      }
+                                    }
+                                  )
+                                }
+                              })
+                            }
+                          })
+                        }
+                      })
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
 projectsRouter.post('/', (req, res) => {
   const {
-    firstname,
-    lastname,
-    email,
-    phone,
-    city,
-    feedbackClient,
-    companyType_id,
-    company_id,
-    numClients,
-    contactType_id,
-    clients_id,
-    languages_id,
-    service_id,
-    itwStart,
-    itwDeadline,
-    projectTitle,
-    quantityExpert,
     clientComment,
-    totalPrice,
-    numProject,
-    status_id,
-    expertiseLevel_id,
     client_id,
-    jobTitle_id,
-    practice_id,
-    projectType_id,
+    exampleCompany_id,
+    excludedCompany_id,
+    expertiseLevel_id,
     fonction_id,
     geoExpertise_id,
     industry_id,
-    projectTypeName
+    itwDeadline,
+    itwStart,
+    jobTitle_id,
+    languages_id,
+    linkedinKeywords_id,
+    numProject,
+    practice_id,
+    projectTitle,
+    projectType_id,
+    quantityExpert,
+    service_id,
+    status_id,
+    totalPrice
   } = req.body
 
   let datas = [
@@ -109,7 +407,12 @@ projectsRouter.post('/', (req, res) => {
     'INSERT INTO projects_need_industry (industry_id, projects_id) VALUES (?,?);'
   let sql9 =
     'INSERT INTO projects_recommend_company (company_id, projects_id) VALUES (?,?);'
-  let sql10 = 'INSERT INTO projecttype (projectTypeName) VALUES (?);'
+  let sql10 =
+    'INSERT INTO linkedinkeywords_has_projects (linkedinKeywords_id, projects_id) VALUES (?,?);'
+  let sql11 =
+    'INSERT INTO languages_has_projects (languages_id, projects_id) VALUES (?,?);'
+  let sql12 =
+    'INSERT INTO service_has_projects (service_id, projects_id) VALUES (?,?);'
 
   connection.query(sql, datas, (err, result) => {
     if (err) {
@@ -117,7 +420,7 @@ projectsRouter.post('/', (req, res) => {
       res.status(500).send('Error requesting POST projects')
     } else {
       const id = result.insertId
-      let datas2 = [id, company_id]
+      let datas2 = [id, excludedCompany_id]
       connection.query(sql2, datas2, (err, result) => {
         if (err) {
           console.error(err)
@@ -165,7 +468,7 @@ projectsRouter.post('/', (req, res) => {
                                     .status(500)
                                     .send('Error requesting POST8 projects')
                                 } else {
-                                  let datas9 = [id, company_id]
+                                  let datas9 = [id, exampleCompany_id]
                                   connection.query(
                                     sql9,
                                     datas9,
@@ -178,7 +481,7 @@ projectsRouter.post('/', (req, res) => {
                                             'Error requesting POST9 projects'
                                           )
                                       } else {
-                                        let datas10 = [id, projectTypeName]
+                                        let datas10 = [id, linkedinKeywords_id]
                                         connection.query(
                                           sql10,
                                           datas10,
@@ -191,7 +494,42 @@ projectsRouter.post('/', (req, res) => {
                                                   'Error requesting POST10 projects'
                                                 )
                                             } else {
-                                              res.status(200).json(result)
+                                              let datas11 = [id, languages_id]
+                                              connection.query(
+                                                sql11,
+                                                datas11,
+                                                (err, result) => {
+                                                  if (err) {
+                                                    console.error(err)
+                                                    res
+                                                      .status(500)
+                                                      .send(
+                                                        'Error requesting POST11 projects'
+                                                      )
+                                                  } else {
+                                                    let datas12 = [
+                                                      id,
+                                                      service_id
+                                                    ]
+                                                    connection.query(
+                                                      sql12,
+                                                      datas12,
+                                                      (err, result) => {
+                                                        if (err) {
+                                                          console.error(err)
+                                                          res
+                                                            .status(500)
+                                                            .send(
+                                                              'Error requesting POST12 projects'
+                                                            )
+                                                        } else {
+                                                          res.status(200).json
+                                                        }
+                                                      }
+                                                    )
+                                                  }
+                                                }
+                                              )
                                             }
                                           }
                                         )
