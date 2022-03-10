@@ -1,4 +1,5 @@
 const expertsRouter = require('express').Router()
+const { send } = require('express/lib/response')
 const connection = require('../config/db.js')
 
 expertsRouter.get('/', (req, res) => {
@@ -455,15 +456,33 @@ expertsRouter.post('/', (req, res) => {
 
 expertsRouter.put('/form/:id', async (req, res) => {
   const id = req.params.id
-  const body = Object.entries(req.body)
+  const sqlData1 = {
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    email: req.body.email,
+    phone: req.body.phone,
+    company_id: req.body.company_id,
+    linkedinProfile: req.body.linkedinProfile,
+    price: req.body.price,
+    numExpert: req.body.numExpert,
+    kindOfExpert_id: req.body.kindOfExpert_id,
+    practice_id: req.body.practice_id,
+    expertiseLevel_id: req.body.expertiseLevel_id,
+    feedbackExpert: req.body.feedbackExpert,
+    cost: req.body.cost,
+    keywords: req.body.keywords,
+    jobtitle_id: req.body.jobtitle_id
+  }
+  console.log('data1', sqlData1)
+  const datas = Object.entries(sqlData1)
+
+  console.log('datas', datas)
+
   let sqlExport = `UPDATE experts SET `
-  let myArray = body
+  let myArray = datas
     .filter(element => element[1] !== '')
     .filter(element => element[1].length != 0)
     .filter(element => element[1].length != null)
-
-  console.log('myArray', myArray)
-  console.log(`UPDATE experts ${body.name}`)
 
   await myArray.map((array, i, arr) => {
     if (i < arr.length - 1) {
@@ -475,7 +494,9 @@ expertsRouter.put('/form/:id', async (req, res) => {
 
   sqlExport += `WHERE id = ${id};`
 
-  console.log(sqlExport)
+  console.log('my array', myArray, 'sql Export', sqlExport)
+
+  res.send(200)
 
   let sql =
     'UPDATE experts SET firstname, lastname, email, phone, company_id, linkedinProfile, price, numExpert, kindOfExpert_id, practice_id, expertiseLevel_id, feedbackExpert, cost, keywords, jobtitle_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
