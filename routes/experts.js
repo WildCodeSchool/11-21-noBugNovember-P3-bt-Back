@@ -15,8 +15,6 @@ expertsRouter.get('/', (req, res) => {
 })
 
 expertsRouter.get('/form', (req, res) => {
-  console.log('test form')
-
   let sqllan = 'SELECT id,languagesName FROM languages;'
   let sqlgeo = 'SELECT id, geoExpertiseName FROM geoexpertise;'
   let sqlkoe = 'SELECT id, kindOfExpertName FROM kindofexpert; '
@@ -201,7 +199,6 @@ expertsRouter.get('/form/:id', (req, res) => {
       console.error(err)
       res.status(500).send('Error requesting GET experts')
     } else {
-      console.log('result', result)
       const id = result[0].id
       const numExpert = result[0].numExpert
       const firstname = result[0].firstname
@@ -277,7 +274,6 @@ expertsRouter.get('/form/:id', (req, res) => {
       }
       const keywords = result[0].keywords
 
-      console.log('company', company)
       const datas = {
         id: id,
         numExpert: numExpert,
@@ -301,7 +297,6 @@ expertsRouter.get('/form/:id', (req, res) => {
         contact: contact,
         keywords: keywords
       }
-      console.log('datas', datas)
       res.status(200).json(datas)
     }
   })
@@ -465,6 +460,7 @@ expertsRouter.put('/form/:id', async (req, res) => {
   let myArray = body
     .filter(element => element[1] !== '')
     .filter(element => element[1].length != 0)
+    .filter(element => element[1].length != null)
 
   console.log('myArray', myArray)
   console.log(`UPDATE experts ${body.name}`)
