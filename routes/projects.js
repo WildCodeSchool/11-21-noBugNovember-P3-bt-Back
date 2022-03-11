@@ -4,7 +4,7 @@ const connection = require('../config/db.js')
 //num project, linkedin keyword, quantity expert, type of expert, totalprice, dates
 projectsRouter.get('/minicard', (req, res) => {
   let sql =
-    'SELECT p.id,p.numProject, p.totalPrice, p.itwStart, p.itwDeadline, p.quantityExpert, s.status, group_concat(DISTINCT k.kindOfExpertName) AS kindOfExpert, group_concat(DISTINCT lk.linkedinKey) AS linkedin FROM projects AS p INNER JOIN status AS s ON s.id=p.status_id INNER JOIN kindofexpert_has_projects ON p.id = kindofexpert_has_projects.projects_id INNER JOIN kindofexpert AS k ON k.id = kindofexpert_has_projects.kindOfExpert_id INNER JOIN linkedinkeywords_has_projects ON p.id = linkedinkeywords_has_projects.projects_id INNER JOIN linkedinkeywords AS lk ON lk.id = linkedinkeywords_has_projects.linkedinKeywords_id GROUP BY p.projectTitle'
+    'SELECT p.id,p.numProject,p.itwStart, p.itwDeadline, p.quantityExpert, s.status, group_concat(DISTINCT k.kindOfExpertName) AS kindOfExpert, group_concat(DISTINCT i.industryName) AS industry, group_concat(DISTINCT lk.linkedinKey) AS linkedin FROM projects AS p INNER JOIN status AS s ON s.id=p.status_id INNER JOIN kindofexpert_has_projects ON p.id = kindofexpert_has_projects.projects_id INNER JOIN kindofexpert AS k ON k.id = kindofexpert_has_projects.kindOfExpert_id INNER JOIN linkedinkeywords_has_projects ON p.id = linkedinkeywords_has_projects.projects_id INNER JOIN linkedinkeywords AS lk ON lk.id = linkedinkeywords_has_projects.linkedinKeywords_id LEFT JOIN projects_need_industry ON p.id = projects_need_industry.projects_id LEFT JOIN industry AS i ON i.id = projects_need_industry.industry_id GROUP BY p.projectTitle'
   connection.query(sql, (err, result) => {
     if (err) {
       console.error(err)
