@@ -368,6 +368,21 @@ projectsRouter.get('/form', (req, res) => {
   })
 })
 
+projectsRouter.post('/test', (req, res) => {
+  const { table, column, value } = req.body
+  let sql = `INSERT INTO ${table} (${column}) VALUE (?);`
+  connection.query(sql, value, (err, result) => {
+    if (err) {
+      console.error(err)
+      res.status(500).send('Error requesting POST projects')
+    } else {
+      const id = result.insertId
+      const newItem = { id: id, value: value, label: value }
+      res.status(200).json(newItem)
+    }
+  })
+})
+
 projectsRouter.post('/', (req, res) => {
   const {
     clientComment,
@@ -381,6 +396,7 @@ projectsRouter.post('/', (req, res) => {
     itwDeadline,
     itwStart,
     jobTitle_id,
+    kindOfExpert_id,
     languages_id,
     linkedinKeywords_id,
     numProject,
@@ -406,30 +422,37 @@ projectsRouter.post('/', (req, res) => {
     client_id
   ]
 
+  // insert datas in projects
   let sql =
     'INSERT INTO projects (itwStart, itwDeadline , projectTitle, quantityExpert, clientComment, totalPrice, numProject, status_id, expertiseLevel_id, client_id) VALUES (?,?,?,?,?,?,?,?,?,?);'
+
+  // insert datas in many to many where first values are pre-determined
   let sql2 =
-    'INSERT INTO projects_exclude_company (company_id, projects_id) VALUES (?,?);'
+    'INSERT INTO projects_has_practice (practice_id, projects_id) VALUES ?;'
+
+  // insert datas in many to many where new first values can be created
   let sql3 =
-    'INSERT INTO projects_has_jobtitle (projects_id, jobTitle_id) VALUES (?,?);'
+    'INSERT INTO projects_exclude_company (company_id, projects_id) VALUES ?;'
   let sql4 =
-    'INSERT INTO projects_has_practice (projects_id, practice_id) VALUES (?,?);'
+    'INSERT INTO projects_need_fonction (fonction_id, projects_id) VALUES ?;'
   let sql5 =
-    'INSERT INTO projects_has_projecttype (projects_id, projectType_id) VALUES (?,?);'
+    'INSERT INTO projects_need_geoexpertise (geoExpertise_id, projects_id) VALUES ?;'
   let sql6 =
-    'INSERT INTO projects_need_fonction (fonction_id, projects_id) VALUES (?,?);'
+    'INSERT INTO projects_need_industry (industry_id, projects_id) VALUES ?;'
   let sql7 =
-    'INSERT INTO projects_need_geoexpertise (geoExpertise_id, projects_id) VALUES (?,?);'
+    'INSERT INTO projects_has_jobtitle (jobTitle_id, projects_id) VALUES ?;'
   let sql8 =
-    'INSERT INTO projects_need_industry (industry_id, projects_id) VALUES (?,?);'
+    'INSERT INTO kindofexpert_has_projects (kindOfExpert_id, projects_id) VALUES ?;'
   let sql9 =
-    'INSERT INTO projects_recommend_company (company_id, projects_id) VALUES (?,?);'
+    'INSERT INTO languages_has_projects (languages_id, projects_id) VALUES ?;'
   let sql10 =
-    'INSERT INTO linkedinkeywords_has_projects (linkedinKeywords_id, projects_id) VALUES (?,?);'
+    'INSERT INTO linkedinkeywords_has_projects (linkedinKeywords_id, projects_id) VALUES ?;'
   let sql11 =
-    'INSERT INTO languages_has_projects (languages_id, projects_id) VALUES (?,?);'
+    'INSERT INTO projects_has_projecttype (projectType_id, projects_id) VALUES ?;'
   let sql12 =
-    'INSERT INTO service_has_projects (service_id, projects_id) VALUES (?,?);'
+    'INSERT INTO projects_recommend_company (company_id, projects_id) VALUES ?;'
+  let sql13 =
+    'INSERT INTO service_has_projects (service_id, projects_id) VALUES ?;'
 
   connection.query(sql, datas, (err, result) => {
     if (err) {
@@ -437,59 +460,86 @@ projectsRouter.post('/', (req, res) => {
       res.status(500).send('Error requesting POST projects')
     } else {
       const id = result.insertId
-      let ecom = []
-      let datas2 = [id, excludedCompany_id]
-      connection.query(sql2, datas2, (err, result) => {
+      let pra = []
+      for (let i = 0; i < practice_id.length; i++) {
+        pra.push([practice_id[i], id])
+      }
+      connection.query(sql2, [pra], (err, result) => {
         if (err) {
           console.error(err)
           res.status(500).send('Error requesting POST2 projects')
         } else {
-          let datas3 = [id, jobTitle_id]
-          connection.query(sql3, datas3, (err, result) => {
+          let ecie = []
+          for (let i = 0; i < excludedCompany_id.length; i++) {
+            ecie.push([excludedCompany_id[i], id])
+          }
+          connection.query(sql3, [ecie], (err, result) => {
             if (err) {
               console.error(err)
               res.status(500).send('Error requesting POST3 projects')
             } else {
-              let datas4 = [id, practice_id]
-              connection.query(sql4, datas4, (err, result) => {
+              let fon = []
+              for (let i = 0; i < fonction_id.length; i++) {
+                fon.push([fonction_id[i], id])
+              }
+              connection.query(sql4, [fon], (err, result) => {
                 if (err) {
                   console.error(err)
                   res.status(500).send('Error requesting POST4 projects')
                 } else {
-                  let datas5 = [id, projectType_id]
-                  connection.query(sql5, datas5, (err, result) => {
+                  let geo = []
+                  for (let i = 0; i < geoExpertise_id.length; i++) {
+                    geo.push([geoExpertise_id[i], id])
+                  }
+                  connection.query(sql5, [geo], (err, result) => {
                     if (err) {
                       console.error(err)
                       res.status(500).send('Error requesting POST5 projects')
                     } else {
-                      let datas6 = [id, fonction_id]
-                      connection.query(sql6, datas6, (err, result) => {
+                      let ind = []
+                      for (let i = 0; i < industry_id.length; i++) {
+                        ind.push([industry_id[i], id])
+                      }
+                      connection.query(sql6, [ind], (err, result) => {
                         if (err) {
                           console.error(err)
                           res
                             .status(500)
                             .send('Error requesting POST6 projects')
                         } else {
-                          let datas7 = [id, geoExpertise_id]
-                          connection.query(sql7, datas7, (err, result) => {
+                          let job = []
+                          for (let i = 0; i < jobTitle_id.length; i++) {
+                            job.push([jobTitle_id[i], id])
+                          }
+                          connection.query(sql7, [job], (err, result) => {
                             if (err) {
                               console.error(err)
                               res
                                 .status(500)
                                 .send('Error requesting POST7 projects')
                             } else {
-                              let datas8 = [id, industry_id]
-                              connection.query(sql8, datas8, (err, result) => {
+                              let koe = []
+                              for (let i = 0; i < kindOfExpert_id.length; i++) {
+                                koe.push([kindOfExpert_id[i], id])
+                              }
+                              connection.query(sql8, [koe], (err, result) => {
                                 if (err) {
                                   console.error(err)
                                   res
                                     .status(500)
                                     .send('Error requesting POST8 projects')
                                 } else {
-                                  let datas9 = [id, exampleCompany_id]
+                                  let lan = []
+                                  for (
+                                    let i = 0;
+                                    i < languages_id.length;
+                                    i++
+                                  ) {
+                                    lan.push([languages_id[i], id])
+                                  }
                                   connection.query(
                                     sql9,
-                                    datas9,
+                                    [lan],
                                     (err, result) => {
                                       if (err) {
                                         console.error(err)
@@ -499,10 +549,17 @@ projectsRouter.post('/', (req, res) => {
                                             'Error requesting POST9 projects'
                                           )
                                       } else {
-                                        let datas10 = [id, linkedinKeywords_id]
+                                        let lin = []
+                                        for (
+                                          let i = 0;
+                                          i < linkedinKeywords_id.length;
+                                          i++
+                                        ) {
+                                          lin.push([linkedinKeywords_id[i], id])
+                                        }
                                         connection.query(
                                           sql10,
-                                          datas10,
+                                          [lin],
                                           (err, result) => {
                                             if (err) {
                                               console.error(err)
@@ -512,10 +569,17 @@ projectsRouter.post('/', (req, res) => {
                                                   'Error requesting POST10 projects'
                                                 )
                                             } else {
-                                              let datas11 = [id, languages_id]
+                                              let pt = []
+                                              for (
+                                                let i = 0;
+                                                i < projectType_id.length;
+                                                i++
+                                              ) {
+                                                pt.push([projectType_id[i], id])
+                                              }
                                               connection.query(
                                                 sql11,
-                                                datas11,
+                                                [pt],
                                                 (err, result) => {
                                                   if (err) {
                                                     console.error(err)
@@ -525,13 +589,21 @@ projectsRouter.post('/', (req, res) => {
                                                         'Error requesting POST11 projects'
                                                       )
                                                   } else {
-                                                    let datas12 = [
-                                                      id,
-                                                      service_id
-                                                    ]
+                                                    let ecie = []
+                                                    for (
+                                                      let i = 0;
+                                                      i <
+                                                      exampleCompany_id.length;
+                                                      i++
+                                                    ) {
+                                                      ecie.push([
+                                                        exampleCompany_id[i],
+                                                        id
+                                                      ])
+                                                    }
                                                     connection.query(
                                                       sql12,
-                                                      datas12,
+                                                      [ecie],
                                                       (err, result) => {
                                                         if (err) {
                                                           console.error(err)
@@ -541,7 +613,37 @@ projectsRouter.post('/', (req, res) => {
                                                               'Error requesting POST12 projects'
                                                             )
                                                         } else {
-                                                          res.status(200).json
+                                                          let se = []
+                                                          for (
+                                                            let i = 0;
+                                                            i <
+                                                            service_id.length;
+                                                            i++
+                                                          ) {
+                                                            se.push([
+                                                              service_id[i],
+                                                              id
+                                                            ])
+                                                          }
+                                                          connection.query(
+                                                            sql13,
+                                                            [se],
+                                                            (err, result) => {
+                                                              if (err) {
+                                                                console.error(
+                                                                  err
+                                                                )
+                                                                res
+                                                                  .status(500)
+                                                                  .send(
+                                                                    'Error requesting POST13 projects'
+                                                                  )
+                                                              } else {
+                                                                res.status(200)
+                                                                  .json
+                                                              }
+                                                            }
+                                                          )
                                                         }
                                                       }
                                                     )
