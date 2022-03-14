@@ -469,61 +469,201 @@ expertsRouter.post('/', (req, res) => {
 })
 
 expertsRouter.put('/form/:id', async (req, res) => {
-  const id = req.params.id
+  const id = parseInt(req.params.id)
+  const body = req.body
   const sqlData1 = {
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    email: req.body.email,
-    phone: req.body.phone,
+    firstname: body.firstname,
+    lastname: body.lastname,
+    email: body.email,
+    phone: body.phone,
     company_id: req.body.company_id,
-    linkedinProfile: req.body.linkedinProfile,
-    price: req.body.price,
-    numExpert: req.body.numExpert,
-    kindOfExpert_id: req.body.kindOfExpert_id,
-    practice_id: req.body.practice_id,
-    expertiseLevel_id: req.body.expertiseLevel_id,
-    feedbackExpert: req.body.feedbackExpert,
-    cost: req.body.cost,
-    keywords: req.body.keywords,
-    jobtitle_id: req.body.jobtitle_id
+    linkedinProfile: body.linkedinProfile,
+    price: body.price,
+    numExpert: body.numExpert,
+    kindOfExpert_id: body.kindOfExpert_id,
+    practice_id: body.practice_id,
+    expertiseLevel_id: body.expertiseLevel_id,
+    feedbackExpert: body.feedbackExpert,
+    cost: body.cost,
+    keywords: body.keywords,
+    jobtitle_id: body.jobtitle_id
   }
-  console.log('data1', sqlData1)
+  const sqlData2 = body.languages_id
+  const sqlData3 = body.pastCompany_id
+  const sqlData4 = body.contactType_id
+  const sqlData5 = body.geoExpertise_id
+  const sqlData6 = body.projects_id
+
+  let resultEnd = ''
+
+  let sql1 = 'UPDATE experts SET '
+  let sql2Del = 'DELETE FROM experts_has_languages WHERE experts_id = ?'
+  let sql2Post =
+    'INSERT INTO experts_has_languages (experts_id, languages_id) VALUES ?;'
+  let sql3Del = 'DELETE FROM past_companies WHERE experts_id = ?'
+  let sql3Post =
+    'INSERT INTO past_companies (experts_id, pastCompany_id) VALUES ?;'
+  let sql4Del = 'DELETE FROM experts_has_contacttype WHERE experts_id = ?'
+  let sql4Post =
+    'INSERT INTO experts_has_contacttype (experts_id, contactType_id) VALUES ?;'
+  let sql5Del = 'DELETE FROM experts_has_geoexpertise WHERE experts_id = ?'
+  let sql5Post =
+    'INSERT INTO experts_has_geoexpertise (experts_id, geoExpertise_id) VALUES ?;'
+  let sql6Del = 'DELETE FROM experts_has_projects WHERE experts_id = ?'
+  let sql6Post =
+    'INSERT INTO experts_has_projects (experts_id, projects_id) VALUES ?;'
+
+  /***************** SQLDATA1 - datas ********************/
   const datas = Object.entries(sqlData1)
-
-  console.log('datas', datas)
-
-  let sqlExport = `UPDATE experts SET `
   let myArray = datas
+    .filter(element => element[1] !== undefined)
     .filter(element => element[1] !== '')
-    .filter(element => element[1].length != 0)
-    .filter(element => element[1].length != null)
+    .filter(element => element[1].length !== 0)
+    .filter(element => element[1].length !== null)
+
+  let sql1Val = []
 
   await myArray.map((array, i, arr) => {
     if (i < arr.length - 1) {
-      sqlExport += `${array[0]} = ${array[1]}, `
+      sql1 += `${array[0]} = ?, `
+      sql1Val.push(array[1])
     } else {
-      sqlExport += `${array[0]} = ${array[1]} `
+      sql1 += `${array[0]} = ? `
+      sql1Val.push(array[1])
     }
   })
 
-  sqlExport += `WHERE id = ${id};`
+  sql1 += 'WHERE id = ?;'
+  sql1Val.push(id)
 
-  console.log('my array', myArray, 'sql Export', sqlExport)
+  /********************** SQLDATA1 - DATAS ******************/
+  if (myArray.length > 0) {
+    connection.query(sql1, sql1Val, (err, result) => {
+      if (err) {
+        console.error(err)
+        res.status(500).send('Error updating sql1 experts')
+      } else {
+        resultEnd = result
+      }
+    })
+  }
 
-  res.send(200)
+  /********************** SQLDATA2 - LANGUAGES ******************/
+  if (sqlData2.length > 0) {
+    connection.query(sql2Del, id, (err, result) => {
+      if (err) {
+        console.error(err)
+        res.status(500).send('Error updating DELETE2 experts')
+      } else {
+        let lan = []
+        for (let i = 0; i < sqlData2.length; i++) {
+          lan.push([id, sqlData2[i]])
+        }
+        connection.query(sql2Post, [lan], (err, result) => {
+          if (err) {
+            console.error(err)
+            res.status(500).send('Error updating POST2 experts')
+          } else {
+            resultEnd = result
+          }
+        })
+      }
+    })
+  }
 
-  let sql =
-    'UPDATE experts SET firstname, lastname, email, phone, company_id, linkedinProfile, price, numExpert, kindOfExpert_id, practice_id, expertiseLevel_id, feedbackExpert, cost, keywords, jobtitle_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+  /********************** SQLDATA3 - PAST COMPANIES ******************/
+  if (sqlData3.length > 0) {
+    connection.query(sql3Del, id, (err, result) => {
+      if (err) {
+        console.error(err)
+        res.status(500).send('Error updating DELETE3 experts')
+      } else {
+        let pcie = []
+        for (let i = 0; i < sqlData3.length; i++) {
+          pcie.push([id, sqlData3[i]])
+        }
+        connection.query(sql3Post, [pcie], (err, result) => {
+          if (err) {
+            console.error(err)
+            res.status(500).send('Error updating POST3 experts')
+          } else {
+            resultEnd = result
+          }
+        })
+      }
+    })
+  }
 
-  let sql2 =
-    'INSERT INTO experts_has_languages (experts_id, languages_id) VALUES ?;'
-  let sql3 = 'INSERT INTO past_companies (experts_id, pastCompany_id) VALUES ?;'
-  let sql4 =
-    'INSERT INTO experts_has_contacttype (experts_id, contactType_id) VALUES ?;'
-  let sql5 =
-    'INSERT INTO experts_has_geoexpertise (experts_id, geoExpertise_id) VALUES ?;'
-  let sql6 =
-    'INSERT INTO experts_has_projects (experts_id, projects_id) VALUES ?;'
+  /********************** SQLDATA4 - CONTACT TYPE ******************/
+  if (sqlData4.length > 0) {
+    connection.query(sql4Del, id, (err, result) => {
+      if (err) {
+        console.error(err)
+        res.status(500).send('Error updating DELETE4 experts')
+      } else {
+        let ctc = []
+        for (let i = 0; i < sqlData4.length; i++) {
+          ctc.push([id, sqlData4[i]])
+        }
+        connection.query(sql4Post, [ctc], (err, result) => {
+          if (err) {
+            console.error(err)
+            res.status(500).send('Error updating POST4 experts')
+          } else {
+            resultEnd = result
+          }
+        })
+      }
+    })
+  }
+
+  /********************** SQLDATA5 - GEOEXPERTISE ******************/
+  if (sqlData5.length > 0) {
+    connection.query(sql5Del, id, (err, result) => {
+      if (err) {
+        console.error(err)
+        res.status(500).send('Error updating DELETE5 experts')
+      } else {
+        let geo = []
+        for (let i = 0; i < sqlData5.length; i++) {
+          geo.push([id, sqlData5[i]])
+        }
+        connection.query(sql5Post, [geo], (err, result) => {
+          if (err) {
+            console.error(err)
+            res.status(500).send('Error updating POST5 experts')
+          } else {
+            resultEnd = result
+          }
+        })
+      }
+    })
+  }
+
+  /********************** SQLDATA6 - PROJECTS ******************/
+  if (sqlData6.length > 0) {
+    connection.query(sql6Del, id, (err, result) => {
+      if (err) {
+        console.error(err)
+        res.status(500).send('Error updating DELETE6 experts')
+      } else {
+        let pjt = []
+        for (let i = 0; i < sqlData6.length; i++) {
+          pjt.push([id, sqlData6[i]])
+        }
+        connection.query(sql6Post, [pjt], (err, result) => {
+          if (err) {
+            console.error(err)
+            res.status(500).send('Error updating POST6 experts')
+          } else {
+            resultEnd = result
+          }
+        })
+      }
+    })
+  }
+  console.log('resultEnd', resultEnd)
+  res.send(resultEnd)
 })
 
 module.exports = expertsRouter
