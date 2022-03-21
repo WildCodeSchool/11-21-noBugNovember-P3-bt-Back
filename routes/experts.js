@@ -506,6 +506,7 @@ expertsRouter.put('/form/:id', async (req, res) => {
     keywords: body.keywords,
     jobtitle_id: body.jobtitle_id
   }
+
   const sqlData2 = body.languages_id
   const sqlData3 = body.pastCompany_id
   const sqlData4 = body.contactType_id
@@ -541,7 +542,7 @@ expertsRouter.put('/form/:id', async (req, res) => {
 
   let sql1Val = []
 
-  await myArray.map((array, i, arr) => {
+  myArray.map((array, i, arr) => {
     if (i < arr.length - 1) {
       sql1 += `${array[0]} = ?, `
       sql1Val.push(array[1])
@@ -680,8 +681,20 @@ expertsRouter.put('/form/:id', async (req, res) => {
       }
     })
   }
-  console.log('resultEnd', resultEnd)
   res.send(resultEnd)
+})
+
+expertsRouter.delete('/form/:id', (req, res) => {
+  const id = parseInt(req.params.id)
+  const sql = 'DELETE FROM experts WHERE id = ?;'
+  connection.query(sql, id, (err, result) => {
+    if (err) {
+      console.error(err)
+      res.status(500).send('Error Delete experts')
+    } else {
+      res.sendStatus(200)
+    }
+  })
 })
 
 module.exports = expertsRouter

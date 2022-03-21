@@ -15,6 +15,7 @@ statsRouter.get('/globalStats', (req, res) => {
     'SELECT SUM(totalPrice) AS OngoingCA FROM projects WHERE status_id = 1 OR status_id = 2'
   let sql7 =
     'SELECT SUM(factuByExpert) AS CostExperts FROM experts_has_projects AS ep INNER JOIN projects AS p ON ep.projects_id = p.id WHERE ep.answer = 1 AND p.status_id = 3'
+  let sql8 = 'SELECT projects.id FROM projects'
   connection.query(sql, (err, result) => {
     if (err) {
       console.error(err)
@@ -67,7 +68,16 @@ statsRouter.get('/globalStats', (req, res) => {
                             } else {
                               const result7Data = { ...result7[0] }
                               global = { ...global, ...result7Data }
-                              res.status(200).json(global)
+                              connection.query(sql8, (err, result8) => {
+                                if (err) {
+                                  console.error(err)
+                                  res.status(500).send('Error 8th line')
+                                } else {
+                                  const totalProjects = result8.length
+                                  global.totalProjects = totalProjects
+                                  res.status(200).json(global)
+                                }
+                              })
                             }
                           })
                         }
