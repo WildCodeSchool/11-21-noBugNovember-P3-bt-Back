@@ -45,49 +45,6 @@ projectsRouter.get('/maxicard/:id', (req, res) => {
   })
 })
 
-projectsRouter.get('/experts/:id', (req, res) => {
-  let sql =
-    "SELECT group_concat(DISTINCT ehp.experts_id SEPARATOR ', ') AS experts_id FROM experts_has_projects AS ehp WHERE ehp.projects_id = ? GROUP BY ehp.projects_id;"
-  const projectId = req.params.id
-  connection.query(sql, [projectId], (err, result) => {
-    let answer = []
-    if (result.length) {
-      let sql2 =
-        "SELECT e.id, e.numExpert, e.firstname, e.lastname,koe.kindOfExpertName, c.companyName, e.price, e.cost, jt.jobTitleName, e.keywords, ehp.answer, ehp.preferedItwDay, ehp.factuByExpert, group_concat(DISTINCT la.languagesName SEPARATOR ', ') AS languages, group_concat(DISTINCT company.companyName SEPARATOR ', ') AS pastCompanies FROM experts_has_projects AS ehp LEFT JOIN experts AS e ON ehp.experts_id = e.id LEFT JOIN kindofexpert AS koe ON e.kindOfExpert_id = koe.id LEFT JOIN expertiselevel AS el ON e.expertiseLevel_id = el.id LEFT JOIN company AS c ON e.company_id = c.id LEFT JOIN experts_has_languages AS ela ON ela.experts_id = e.id LEFT JOIN languages AS la ON ela.languages_id = la.id LEFT JOIN past_companies AS pc ON pc.experts_id = e.id LEFT JOIN company ON pc.pastCompany_id = company.id LEFT JOIN jobtitle AS jt ON e.jobtitle_id = jt.id LEFT JOIN experts_has_projects ON ehp.experts_id = e.id LEFT JOIN experts_has_industry AS ehi ON ehi.experts_id = e.id LEFT JOIN industry AS i ON ehi.industry_id = i.id LEFT JOIN projects ON ehp.projects_id = projects.id WHERE e.id = ? AND ehp.projects_id = ? GROUP BY e.id;"
-
-      let resArray = []
-      let results = result[0].experts_id.split(', ')
-
-      for (let i = 0; i < results.length; i++) {
-        resArray.push(results[i])
-      }
-
-      console.log(resArray)
-
-      for (let i = 0; i < resArray.length; i++) {
-        let datas = [resArray[i], projectId]
-
-        console.log(datas)
-
-        connection.query(sql2, datas, (err, result) => {
-          if (err) {
-            console.error(err)
-            res.status(500).send('Error requesting expert')
-          } else {
-            answer.push(result[0])
-            console.log(answer)
-            if (answer.length === results.length) {
-              res.status(200).json(answer)
-            }
-          }
-        })
-      }
-    } else {
-      res.status(200).json(answer)
-    }
-  })
-})
-
 projectsRouter.get('/form', (req, res) => {
   let sqllan = 'SELECT id, languagesName FROM languages;'
   let sqlgeo = 'SELECT id, geoExpertiseName FROM geoexpertise;'
@@ -879,16 +836,17 @@ projectsRouter.put('/:id', async (req, res) => {
   const id = parseInt(req.params.id)
   const body = req.body
   const sqlData1 = {
-    numProject: body.numProject,
-    quantityExpert: body.quantityExpert,
-    projectTitle: body.projectTitle,
-    clientComment: body.clientComment,
-    totalPrice: req.body.totalPrice,
     itwStart: body.itwStart,
     itwDeadline: body.itwDeadline,
+    projectTitle: body.projectTitle,
+    quantityExpert: body.quantityExpert,
+    clientComment: body.clientComment,
+    totalPrice: req.body.totalPrice,
+    numProject: body.numProject,
     status_id: body.status_id,
     expertiseLevel_id: body.expertiseLevel_id,
-    client_id: body.client_id
+    client_id: body.client_id,
+    projectType_id: body.projectType_id
   }
 
   const sqlData2 = body.languages_id
@@ -899,7 +857,7 @@ projectsRouter.put('/:id', async (req, res) => {
   const sqlData7 = body.excludedCompany_id
   const sqlData8 = body.jobTitle_id
   const sqlData9 = body.practice_id
-  const sqlData10 = body.projectType_id
+  // const sqlData10 = body.projectType_id
   const sqlData11 = body.fonction_id
   const sqlData12 = body.industry_id
   const sqlData13 = body.exampleCompany_id
@@ -941,9 +899,9 @@ projectsRouter.put('/:id', async (req, res) => {
   let sql9Post =
     'INSERT INTO projects_has_practice (projects_id, practice_id) VALUES ?;'
 
-  let sql10Del = 'DELETE FROM projects_has_projecttype WHERE projects_id = ?'
-  let sql10Post =
-    'INSERT INTO projects_has_projecttype (projects_id, projectType_id) VALUES ?;'
+  // let sql10Del = 'DELETE FROM projects_has_projecttype WHERE projects_id = ?'
+  // let sql10Post =
+  //   'INSERT INTO projects_has_projecttype (projects_id, projectType_id) VALUES ?;'
 
   let sql11Del = 'DELETE FROM projects_need_fonction WHERE projects_id = ?'
   let sql11Post =
@@ -1176,28 +1134,28 @@ projectsRouter.put('/:id', async (req, res) => {
     })
   }
 
-  /********************** SQLDATA10 - PROJECT TYPE ******************/
-  if (sqlData10.length > 0) {
-    connection.query(sql10Del, id, (err, result) => {
-      if (err) {
-        console.error(err)
-        res.status(500).send('Error updating DELETE10 projects')
-      } else {
-        let pt = []
-        for (let i = 0; i < sqlData10.length; i++) {
-          pt.push([id, sqlData10[i]])
-        }
-        connection.query(sql10Post, [pt], (err, result) => {
-          if (err) {
-            console.error(err)
-            res.status(500).send('Error updating POST10 projects')
-          } else {
-            resultEnd = result
-          }
-        })
-      }
-    })
-  }
+  // /********************** SQLDATA10 - PROJECT TYPE ******************/
+  // if (sqlData10.length > 0) {
+  //   connection.query(sql10Del, id, (err, result) => {
+  //     if (err) {
+  //       console.error(err)
+  //       res.status(500).send('Error updating DELETE10 projects')
+  //     } else {
+  //       let pt = []
+  //       for (let i = 0; i < sqlData10.length; i++) {
+  //         pt.push([id, sqlData10[i]])
+  //       }
+  //       connection.query(sql10Post, [pt], (err, result) => {
+  //         if (err) {
+  //           console.error(err)
+  //           res.status(500).send('Error updating POST10 projects')
+  //         } else {
+  //           resultEnd = result
+  //         }
+  //       })
+  //     }
+  //   })
+  // }
 
   /********************** SQLDATA11 - FONCTION ******************/
   if (sqlData11.length > 0) {

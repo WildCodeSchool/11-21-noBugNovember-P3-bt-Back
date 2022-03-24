@@ -473,24 +473,6 @@ expertsRouter.post('/', (req, res) => {
   })
 })
 
-expertsRouter.post('/project', (req, res) => {
-  const { expert_id, project_id } = req.body
-
-  let datas = [expert_id, project_id]
-
-  let sql =
-    'INSERT INTO experts_has_projects (experts_id, projects_id) VALUES (?, ?)'
-
-  connection.query(sql, datas, (err, result) => {
-    if (err) {
-      console.error(err)
-      res.status(500).send('Error requesting POST expert has project')
-    } else {
-      res.status(200).json(result)
-    }
-  })
-})
-
 expertsRouter.put('/form/:id', async (req, res) => {
   const id = parseInt(req.params.id)
   const body = req.body
