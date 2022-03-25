@@ -277,11 +277,6 @@ clientsRouter.post('/', (req, res) => {
   })
 })
 
-// clientsRouter.put('/form/:id', (req, res) => {
-//   console.log('put', req.body)
-//   res.sendStatus(200)
-// })
-
 clientsRouter.put('/form/:id', async (req, res) => {
   const id = parseInt(req.params.id)
   const body = req.body
