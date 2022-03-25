@@ -377,8 +377,7 @@ expertsRouter.post('/', (req, res) => {
     feedbackExpert,
     cost,
     keywords,
-    jobtitle_id,
-    industry_id
+    jobtitle_id
   ]
 
   let sql =
@@ -481,7 +480,7 @@ expertsRouter.put('/form/:id', async (req, res) => {
     lastname: body.lastname,
     email: body.email,
     phone: body.phone,
-    company_id: req.body.company_id,
+    company_id: body.company_id,
     linkedinProfile: body.linkedinProfile,
     price: body.price,
     numExpert: body.numExpert,
