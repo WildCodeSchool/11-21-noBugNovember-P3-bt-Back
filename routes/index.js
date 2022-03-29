@@ -1,6 +1,7 @@
-const clientsRouter = require('./clients')
-const expertsRouter = require('./experts')
-const projectsRouter = require('./projects')
+const clientsRouter = require('./clients');
+const expertsRouter = require('./experts');
+const filterRouter = require('./filter'); 
+const projectsRouter = require('./projects');
 const projexpertsRouter = require('./projexperts')
 const statsRouter = require('./stats')
 
@@ -9,7 +10,9 @@ const setupRoutes = app => {
 
   app.use('/experts', expertsRouter)
 
-  app.use('/projects', projectsRouter)
+  app.use('/filter', filterRouter); 
+
+  app.use('/projects', projectsRouter);
 
   app.use('/projexperts', projexpertsRouter)
 
