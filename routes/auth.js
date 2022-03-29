@@ -6,6 +6,17 @@ const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
 
+// authRouter.get('/creation', (req, res) => {
+//   const sql = 'SELECT * FROM admin'
+//   mysql.query(sql, (err, result) => {
+//     if (err) {
+//       res.status(500).send('Error retrieving data from database')
+//     } else {
+//       res.status(200).json(result)
+//     }
+//   })
+// })
+
 const getToken = req => {
   if (
     req.headers.authorization &&

@@ -1,3 +1,4 @@
+const creaRouter = require('./creation')
 const authRouter = require('./auth')
 const clientsRouter = require('./clients')
 const expertsRouter = require('./experts')
@@ -5,6 +6,8 @@ const projectsRouter = require('./projects')
 const statsRouter = require('./stats')
 
 const setupRoutes = app => {
+  app.use('/creation', creaRouter)
+
   app.use('/auth', authRouter)
 
   app.use('/clients', clientsRouter)
