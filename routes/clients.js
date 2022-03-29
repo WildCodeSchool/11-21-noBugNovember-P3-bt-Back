@@ -87,4 +87,92 @@ clientsRouter.post('/', (req, res) => {
   })
 })
 
+clientsRouter.get('/form', (req, res) => {
+  let id = req.params.id
+  let sqlpro = 'SELECT id, projectsName FROM projects;'
+  let sqlfun = 'SELECT id, functionName FROM fonction;'
+  let sqlfavc = 'SELECT id, favoriteContactName FROM contactType;'
+  let sqlkob = 'SELECT id, kindOfBusinessName FROM companyType;'
+  let sqldeserv = 'SELECT id, desiredServiceName FROM service;'
+  let projects = []
+  let fonction = []
+  let contactType = []
+  let companyType = []
+  let service = []
+
+  connection.query(sqlpro, id, (errpro, resultpro) => {
+    if (errpro) {
+      console.error(errpro)
+      res.status(500).send('Error requesting form datas')
+    } else {
+      resultpro.forEach(pr =>
+        projects.push({
+          id: pr.id,
+          value: pr.projectsName,
+          label: pr.projectsName
+        })
+      )
+      connection.query(sqlfun, (errfun, resultfun) => {
+        if (errfun) {
+          console.error(errfun)
+        } else {
+          resultfun.forEach(fun =>
+            fonction.push({
+              id: fun.id,
+              value: fun.functionName,
+              label: fun.functionName
+            })
+          )
+        }
+      })
+      connection.query(sqlfavc, (errfavc, resultfavc) => {
+        if (errfavc) {
+          console.error(errfavc)
+        } else {
+          resultfavc.forEach(favc =>
+            contactType.push({
+              id: favc.id,
+              value: favc.favoriteContactName,
+              label: favc.favoriteContactName
+            })
+          )
+          connection.query(sqlkob, (errkob, resultkob) => {
+            if (errkob) {
+              console.error(errkob)
+            } else {
+              resultkob.forEach(kob =>
+                companyType.push({
+                  id: kob.id,
+                  value: kob.kindOfBusinessName,
+                  label: kob.kindOfBusinessName
+                })
+              )
+              connection.query(sqldeserv, (errdeserv, resultdeserv) => {
+                if (errdeserv) {
+                  console.error(errdeserv)
+                } else {
+                  resultdeserv.forEach(deserv =>
+                    service.push({
+                      id: deserv.id,
+                      value: desiredServiceName,
+                      label: desiredServiceName
+                    })
+                  )
+                  const options = {
+                    projects: [...projects],
+                    contactType: [...contactType],
+                    companyType: [...companyType],
+                    service: [...service]
+                  }
+                  res.status(200).json(options)
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
 module.exports = clientsRouter

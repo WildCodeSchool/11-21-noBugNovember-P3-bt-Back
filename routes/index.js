@@ -1,19 +1,19 @@
-const clientsRouter = require('./clients');
-const expertsRouter = require('./experts');
-const projectsRouter = require('./projects');
-const statsRouter = require('./stats');
+const authRouter = require('./auth')
+const clientsRouter = require('./clients')
+const expertsRouter = require('./experts')
+const projectsRouter = require('./projects')
+const statsRouter = require('./stats')
 
+const setupRoutes = app => {
+  app.use('/auth', authRouter)
 
-const setupRoutes = (app) => {
-  
-  app.use('/clients', clientsRouter);
-  
-  app.use('/experts', expertsRouter);
+  app.use('/clients', clientsRouter)
 
-  app.use('/projects', projectsRouter);
+  app.use('/experts', expertsRouter)
 
-  app.use('/stats', statsRouter);
-};
+  app.use('/projects', projectsRouter)
 
-module.exports = { setupRoutes };
+  app.use('/stats', statsRouter)
+}
 
+module.exports = { setupRoutes }
