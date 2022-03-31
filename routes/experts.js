@@ -732,7 +732,7 @@ expertsRouter.post('/', (req, res) => {
                                                         'Error requesting POST11 experts'
                                                       )
                                                   } else {
-                                                    res.status(200).json(result)
+                                                    res.sendStatus(200)
                                                   }
                                                 }
                                               )
@@ -822,7 +822,7 @@ expertsRouter.put('/form/:id', async (req, res) => {
   let sql10Del = 'DELETE FROM experts_has_sector WHERE experts_id = ?'
   let sql10Post =
     'INSERT INTO experts_has_sector (experts_id, sector_id) VALUES ?;'
-  let sql11Del = 'DELETE FROM experts_has_specialty WHERE specialty_id = ?'
+  let sql11Del = 'DELETE FROM experts_has_specialty WHERE experts_id = ?'
   let sql11Post =
     'INSERT INTO experts_has_specialty (experts_id, specialty_id) VALUES ?;'
 
