@@ -728,7 +728,7 @@ expertsRouter.post('/', (req, res) => {
                                                         'Error requesting POST11 experts'
                                                       )
                                                   } else {
-                                                    res.status(200).json(result)
+                                                    res.sendStatus(200)
                                                   }
                                                 }
                                               )

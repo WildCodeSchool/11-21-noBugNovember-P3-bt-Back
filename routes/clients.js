@@ -10,7 +10,6 @@ clientsRouter.get('/', (req, res) => {
       console.error(err)
       res.status(500).send('Error requesting GET clients')
     } else {
-      console.log('get clients', result)
       res.status(200).json(result)
     }
   })
