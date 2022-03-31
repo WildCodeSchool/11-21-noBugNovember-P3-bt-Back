@@ -3,12 +3,14 @@ const connection = require('../config/db.js')
 
 clientsRouter.get('/', (req, res) => {
   let sql =
-    'SELECT cl.id, cl.firstname, cl.lastname, cl.email, cl.phone, cl.city, cl.feedbackclient AS feedbackClient, cl.numClients AS numClient, ct.companyTypeName, c.companyName, group_concat(DISTINCT cty.contactTypeName) AS contactType, group_concat(DISTINCT l.languagesName) AS languages,group_concat(DISTINCT se.serviceName) AS service,group_concat(DISTINCT projects.numProject) AS numProject FROM clients AS cl INNER JOIN companytype AS ct ON ct.id = cl.companyType_id INNER JOIN company AS c ON c.id = cl.company_id INNER JOIN clients_has_contacttype ON cl.id = clients_has_contacttype.clients_id INNER JOIN contacttype AS cty ON cty.id = clients_has_contacttype.contactType_id INNER JOIN clients_has_languages ON cl.id = clients_has_languages.clients_id INNER JOIN languages AS l ON l.id = clients_has_languages.languages_id INNER JOIN clients_has_service ON cl.id = clients_has_service.clients_id INNER JOIN service AS se ON se.id = clients_has_service.service_id INNER JOIN projects ON cl.id = projects.client_id GROUP BY cl.id'
+    'SELECT cl.id, cl.firstname, cl.lastname, cl.email, cl.phone, cl.city, cl.feedbackclient AS feedbackClient, cl.numClients AS numClient, ct.companyTypeName, c.companyName, group_concat(DISTINCT cty.contactTypeName SEPARATOR ", ") AS contactType, group_concat(DISTINCT fct.fonctionName SEPARATOR ", ") AS fonction, group_concat(DISTINCT se.serviceName SEPARATOR ", ") AS service,group_concat(DISTINCT projects.numProject SEPARATOR ", ") AS numProject FROM clients AS cl LEFT JOIN companytype AS ct ON ct.id = cl.companyType_id LEFT JOIN company AS c ON c.id = cl.company_id LEFT JOIN clients_has_contacttype ON cl.id = clients_has_contacttype.clients_id LEFT JOIN contacttype AS cty ON cty.id = clients_has_contacttype.contactType_id LEFT JOIN clients_has_fonction AS cfct ON cfct.clients_id = cl.id LEFT JOIN fonction AS fct ON fct.id = cfct.fonction_id LEFT JOIN clients_has_service ON cl.id = clients_has_service.clients_id LEFT JOIN service AS se ON se.id = clients_has_service.service_id LEFT JOIN projects ON cl.id = projects.client_id GROUP BY cl.id'
+
   connection.query(sql, (err, result) => {
     if (err) {
       console.error(err)
       res.status(500).send('Error requesting GET clients')
     } else {
+      console.log('get clients', result)
       res.status(200).json(result)
     }
   })
@@ -109,7 +111,7 @@ clientsRouter.get('/form', (req, res) => {
 clientsRouter.get('/form/:id', (req, res) => {
   let id = req.params.id
   let sql =
-    'SELECT cl.id, cl.firstname, cl.lastname, cl.email, cl.phone, cl.city, cl.feedbackclient AS feedbackClient, cl.numClients AS numClient, ct.companyTypeName, c.companyName, group_concat(DISTINCT cty.contactTypeName SEPARATOR ", ") AS contactType, group_concat(DISTINCT l.languagesName SEPARATOR ", ") AS languages,group_concat(DISTINCT se.serviceName SEPARATOR ", ") AS service,group_concat(DISTINCT projects.numProject SEPARATOR ", ") AS numProject FROM clients AS cl INNER JOIN companytype AS ct ON ct.id = cl.companyType_id INNER JOIN company AS c ON c.id = cl.company_id INNER JOIN clients_has_contacttype ON cl.id = clients_has_contacttype.clients_id INNER JOIN contacttype AS cty ON cty.id = clients_has_contacttype.contactType_id INNER JOIN clients_has_languages ON cl.id = clients_has_languages.clients_id INNER JOIN languages AS l ON l.id = clients_has_languages.languages_id INNER JOIN clients_has_service ON cl.id = clients_has_service.clients_id INNER JOIN service AS se ON se.id = clients_has_service.service_id INNER JOIN projects ON cl.id = projects.client_id WHERE cl.numClients IN (SELECT cl.numClients FROM clients AS cl) AND cl.id = ? GROUP BY cl.id'
+    'SELECT cl.id, cl.firstname, cl.lastname, cl.email, cl.phone, cl.city, cl.feedbackclient AS feedbackClient, cl.numClients AS numClient, ct.companyTypeName, c.companyName, group_concat(DISTINCT cty.contactTypeName SEPARATOR ", ") AS contactType, group_concat(DISTINCT fct.fonctionName SEPARATOR ", ") AS fonction, group_concat(DISTINCT se.serviceName SEPARATOR ", ") AS service,group_concat(DISTINCT projects.numProject SEPARATOR ", ") AS numProject FROM clients AS cl LEFT JOIN companytype AS ct ON ct.id = cl.companyType_id LEFT JOIN company AS c ON c.id = cl.company_id LEFT JOIN clients_has_contacttype ON cl.id = clients_has_contacttype.clients_id LEFT JOIN contacttype AS cty ON cty.id = clients_has_contacttype.contactType_id LEFT JOIN clients_has_fonction AS cfct ON cfct.clients_id = cl.id LEFT JOIN fonction AS fct ON fct.id = cfct.fonction_id LEFT JOIN clients_has_service ON cl.id = clients_has_service.clients_id LEFT JOIN service AS se ON se.id = clients_has_service.service_id LEFT JOIN projects ON cl.id = projects.client_id WHERE cl.numClients IN (SELECT cl.numClients FROM clients AS cl) AND cl.id = ? GROUP BY cl.id'
   connection.query(sql, id, (err, result) => {
     if (err) {
       console.error(err)
@@ -151,11 +153,11 @@ clientsRouter.get('/form/:id', (req, res) => {
           service.push({ value: pjtArr[i], label: pjtArr[i] })
         }
       }
-      let languages = []
-      if (result[0].languages) {
-        const pjtArr = result[0].languages.split(', ')
-        for (let i = 0; i < pjtArr.length; i++) {
-          languages.push({ value: pjtArr[i], label: pjtArr[i] })
+      let fonction = []
+      if (result[0].fonction) {
+        const fctArr = result[0].fonction.split(', ')
+        for (let i = 0; i < fctArr.length; i++) {
+          fonction.push({ value: fctArr[i], label: fctArr[i] })
         }
       }
       const feedbackClient = result[0].feedbackClient
@@ -172,7 +174,7 @@ clientsRouter.get('/form/:id', (req, res) => {
         contactType: contactType,
         companyType: companyType,
         service: service,
-        languages: languages,
+        fonction: fonction,
         feedbackClient: feedbackClient
       }
       res.status(200).json(datas)
@@ -290,16 +292,16 @@ clientsRouter.put('/form/:id', async (req, res) => {
     numClients: body.numClients,
     companyType_id: body.companyType_id
   }
-  const sqlData2 = body.languages_id
+  const sqlData2 = body.fonction_id
   const sqlData3 = body.contactType_id
   const sqlData4 = body.service_id
 
   let resultEnd = ''
 
   let sql1 = 'UPDATE clients SET '
-  let sql2Del = 'DELETE FROM clients_has_languages WHERE clients_id = ?'
+  let sql2Del = 'DELETE FROM clients_has_fonction WHERE clients_id = ?'
   let sql2Post =
-    'INSERT INTO clients_has_languages (clients_id, languages_id) VALUES ?;'
+    'INSERT INTO clients_has_fonction (clients_id, fonction_id) VALUES ?;'
   let sql3Del = 'DELETE FROM clients_has_contacttype WHERE clients_id = ?'
   let sql3Post =
     'INSERT INTO clients_has_contacttype (clients_id, contactType_id) VALUES ?;'
@@ -342,18 +344,18 @@ clientsRouter.put('/form/:id', async (req, res) => {
     })
   }
 
-  /********************** SQLDATA2 - LANGUAGES ******************/
+  /********************** SQLDATA2 - FONCTION ******************/
   if (sqlData2.length > 0) {
     connection.query(sql2Del, id, (err, result) => {
       if (err) {
         console.error(err)
         res.status(500).send('Error updating DELETE2 experts')
       } else {
-        let lan = []
+        let fct = []
         for (let i = 0; i < sqlData2.length; i++) {
-          lan.push([id, sqlData2[i]])
+          fct.push([id, sqlData2[i]])
         }
-        connection.query(sql2Post, [lan], (err, result) => {
+        connection.query(sql2Post, [fct], (err, result) => {
           if (err) {
             console.error(err)
             res.status(500).send('Error updating POST2 experts')
