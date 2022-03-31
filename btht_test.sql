@@ -28,7 +28,7 @@ CREATE TABLE `admin` (
   `password` varchar(255) DEFAULT NULL,
   `forgetPassword` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,7 +37,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
-INSERT INTO `admin` VALUES (1,'test@test.com','9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08','9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08');
+INSERT INTO `admin` VALUES (1,'test@test.com','9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08','9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'),(2,'test2@test.com','60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752','60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752'),(3,'test3@test.com','fd61a03af4f77d870fc21e05e7e80678095c92d808cfb3b5c279ee04c74aca13','fd61a03af4f77d870fc21e05e7e80678095c92d808cfb3b5c279ee04c74aca13');
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -64,7 +64,7 @@ CREATE TABLE `clients` (
   KEY `fk_clients_company1_idx` (`company_id`),
   CONSTRAINT `fk_clients_company1` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_clients_companyType` FOREIGN KEY (`companyType_id`) REFERENCES `companytype` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,6 +73,7 @@ CREATE TABLE `clients` (
 
 LOCK TABLES `clients` WRITE;
 /*!40000 ALTER TABLE `clients` DISABLE KEYS */;
+INSERT INTO `clients` VALUES (6,'John','DOE','john.doe@webmail.com','0235148759','Brooklyn','Needs some dkfjdkj dkdjk dldl dkjd dld djd ldjd difjdi fms fosjfis felke.','CL01',7,17),(7,'Dan','MILLER','dan.miller@gmail.com','4851614785','London','jfdkjdfsjkfds dlsqkjkdfs dfskdsfqj dfskdfk fdsjdf fdmlkfdjfd dfkjfd fdskdf.','CL02',8,18),(8,'Edith','WRIGHT','edith.wright@mail.fr','6532154512','Paris','nfdjjjdbnnfd kdqsjkfd kfdj dflkmj fdjldf fdjfd ldfkj fd fdjkfdifdjfd lfdkj dfifd fdlkjdf dfifd flzmjeqakj am akldfj am jfdmlkqdfji ama fmkaj dfij fma kejf emlkjf i mk.','CL03',9,19);
 /*!40000 ALTER TABLE `clients` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -100,6 +101,7 @@ CREATE TABLE `clients_has_contacttype` (
 
 LOCK TABLES `clients_has_contacttype` WRITE;
 /*!40000 ALTER TABLE `clients_has_contacttype` DISABLE KEYS */;
+INSERT INTO `clients_has_contacttype` VALUES (7,1),(6,2),(7,2),(6,3),(8,4),(6,6),(8,7);
 /*!40000 ALTER TABLE `clients_has_contacttype` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -126,6 +128,7 @@ CREATE TABLE `clients_has_fonction` (
 
 LOCK TABLES `clients_has_fonction` WRITE;
 /*!40000 ALTER TABLE `clients_has_fonction` DISABLE KEYS */;
+INSERT INTO `clients_has_fonction` VALUES (6,1),(6,2),(7,4),(7,11),(6,14),(8,15),(8,16);
 /*!40000 ALTER TABLE `clients_has_fonction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -153,6 +156,7 @@ CREATE TABLE `clients_has_service` (
 
 LOCK TABLES `clients_has_service` WRITE;
 /*!40000 ALTER TABLE `clients_has_service` DISABLE KEYS */;
+INSERT INTO `clients_has_service` VALUES (6,6),(8,6),(7,7),(8,7);
 /*!40000 ALTER TABLE `clients_has_service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -167,7 +171,7 @@ CREATE TABLE `company` (
   `id` int NOT NULL AUTO_INCREMENT,
   `companyName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,7 +180,7 @@ CREATE TABLE `company` (
 
 LOCK TABLES `company` WRITE;
 /*!40000 ALTER TABLE `company` DISABLE KEYS */;
-INSERT INTO `company` VALUES (17,'EDF');
+INSERT INTO `company` VALUES (17,'EDF'),(18,'Biotech'),(19,'Biomarché'),(20,'TechIndustry'),(21,'Dent');
 /*!40000 ALTER TABLE `company` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,7 +195,7 @@ CREATE TABLE `companytype` (
   `id` int NOT NULL AUTO_INCREMENT,
   `companyTypeName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -200,6 +204,7 @@ CREATE TABLE `companytype` (
 
 LOCK TABLES `companytype` WRITE;
 /*!40000 ALTER TABLE `companytype` DISABLE KEYS */;
+INSERT INTO `companytype` VALUES (7,'Pharma'),(8,'Market'),(9,'Sale');
 /*!40000 ALTER TABLE `companytype` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -286,7 +291,7 @@ CREATE TABLE `experts` (
   CONSTRAINT `fk_experts_jobtitle1` FOREIGN KEY (`jobtitle_id`) REFERENCES `jobtitle` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_experts_kindOfExpert1` FOREIGN KEY (`kindOfExpert_id`) REFERENCES `kindofexpert` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_experts_practice1` FOREIGN KEY (`practice_id`) REFERENCES `practice` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -295,6 +300,7 @@ CREATE TABLE `experts` (
 
 LOCK TABLES `experts` WRITE;
 /*!40000 ALTER TABLE `experts` DISABLE KEYS */;
+INSERT INTO `experts` VALUES (28,'Bryan','LOFFY','bryan.loffy@webmail.com','6532124587',20,'www.linkedin.com/in/bryan-loffy',500,'EX01',4,2,3,'jdskjfdsifn fdmkjfdk fdsifd fdlkfdj fsdifds.',200,'doc, pharma',7),(29,'Kengo','TANAKA','tanaka.kengo@mail.jp','0214541154',20,'www.linkedin.com/in/tanaka-kengo',700,'EX02',3,1,1,'fgdjkjvwcx jmjwcxvk.',500,'japan, management',8),(30,'Jean','DUPONT','jean.dupont@mail.fr','0354216859',21,'www.linkedin.com/in/jean-dupont',900,'EX03',2,2,3,'dsfqfhejk jdfhjfd jj.',300,'none',6),(31,'Dave','LONG','dave.long@webmail.com','800770450',19,'www.linkedin.com/in/dave-long',900,'EX04',1,1,2,'sdfjkhhjdfsj',400,'none',8);
 /*!40000 ALTER TABLE `experts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -321,6 +327,7 @@ CREATE TABLE `experts_has_contacttype` (
 
 LOCK TABLES `experts_has_contacttype` WRITE;
 /*!40000 ALTER TABLE `experts_has_contacttype` DISABLE KEYS */;
+INSERT INTO `experts_has_contacttype` VALUES (29,1),(31,1),(29,3),(31,3),(30,4),(29,5),(31,5),(30,6),(28,7),(29,7);
 /*!40000 ALTER TABLE `experts_has_contacttype` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -347,6 +354,7 @@ CREATE TABLE `experts_has_fonction` (
 
 LOCK TABLES `experts_has_fonction` WRITE;
 /*!40000 ALTER TABLE `experts_has_fonction` DISABLE KEYS */;
+INSERT INTO `experts_has_fonction` VALUES (29,4),(28,12),(31,12),(28,13),(29,13),(30,15);
 /*!40000 ALTER TABLE `experts_has_fonction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -374,6 +382,7 @@ CREATE TABLE `experts_has_geoexpertise` (
 
 LOCK TABLES `experts_has_geoexpertise` WRITE;
 /*!40000 ALTER TABLE `experts_has_geoexpertise` DISABLE KEYS */;
+INSERT INTO `experts_has_geoexpertise` VALUES (28,18),(29,18),(30,19),(31,21);
 /*!40000 ALTER TABLE `experts_has_geoexpertise` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -400,6 +409,7 @@ CREATE TABLE `experts_has_hcptype` (
 
 LOCK TABLES `experts_has_hcptype` WRITE;
 /*!40000 ALTER TABLE `experts_has_hcptype` DISABLE KEYS */;
+INSERT INTO `experts_has_hcptype` VALUES (28,8),(29,9),(30,9),(31,9);
 /*!40000 ALTER TABLE `experts_has_hcptype` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -427,6 +437,7 @@ CREATE TABLE `experts_has_industry` (
 
 LOCK TABLES `experts_has_industry` WRITE;
 /*!40000 ALTER TABLE `experts_has_industry` DISABLE KEYS */;
+INSERT INTO `experts_has_industry` VALUES (28,3),(29,4),(28,6),(31,7),(29,8),(31,8),(28,9),(29,9),(30,9),(31,10);
 /*!40000 ALTER TABLE `experts_has_industry` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -454,6 +465,7 @@ CREATE TABLE `experts_has_languages` (
 
 LOCK TABLES `experts_has_languages` WRITE;
 /*!40000 ALTER TABLE `experts_has_languages` DISABLE KEYS */;
+INSERT INTO `experts_has_languages` VALUES (28,9),(30,9),(28,10),(29,12),(29,13),(31,13);
 /*!40000 ALTER TABLE `experts_has_languages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -511,6 +523,7 @@ CREATE TABLE `experts_has_projects` (
 
 LOCK TABLES `experts_has_projects` WRITE;
 /*!40000 ALTER TABLE `experts_has_projects` DISABLE KEYS */;
+INSERT INTO `experts_has_projects` VALUES (28,36,1,'2022/03/12','300'),(28,38,0,'2020/12/31','500'),(29,37,1,'2022/03/21','500'),(30,37,NULL,NULL,NULL),(30,38,1,'2022/09/30','300');
 /*!40000 ALTER TABLE `experts_has_projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -537,6 +550,7 @@ CREATE TABLE `experts_has_sector` (
 
 LOCK TABLES `experts_has_sector` WRITE;
 /*!40000 ALTER TABLE `experts_has_sector` DISABLE KEYS */;
+INSERT INTO `experts_has_sector` VALUES (28,8),(29,9),(30,9),(31,9);
 /*!40000 ALTER TABLE `experts_has_sector` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -563,6 +577,7 @@ CREATE TABLE `experts_has_specialty` (
 
 LOCK TABLES `experts_has_specialty` WRITE;
 /*!40000 ALTER TABLE `experts_has_specialty` DISABLE KEYS */;
+INSERT INTO `experts_has_specialty` VALUES (28,14),(29,15),(30,15),(31,15);
 /*!40000 ALTER TABLE `experts_has_specialty` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -601,7 +616,7 @@ CREATE TABLE `geoexpertise` (
   `id` int NOT NULL AUTO_INCREMENT,
   `geoExpertiseName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -610,6 +625,7 @@ CREATE TABLE `geoexpertise` (
 
 LOCK TABLES `geoexpertise` WRITE;
 /*!40000 ALTER TABLE `geoexpertise` DISABLE KEYS */;
+INSERT INTO `geoexpertise` VALUES (18,'Germany'),(19,'France'),(21,'China'),(22,'Japan');
 /*!40000 ALTER TABLE `geoexpertise` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -624,7 +640,7 @@ CREATE TABLE `hcptype` (
   `id` int NOT NULL AUTO_INCREMENT,
   `hcpTypeName` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -633,6 +649,7 @@ CREATE TABLE `hcptype` (
 
 LOCK TABLES `hcptype` WRITE;
 /*!40000 ALTER TABLE `hcptype` DISABLE KEYS */;
+INSERT INTO `hcptype` VALUES (8,'Medical Affairs'),(9,'None');
 /*!40000 ALTER TABLE `hcptype` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -732,6 +749,7 @@ CREATE TABLE `kindofexpert_has_projects` (
 
 LOCK TABLES `kindofexpert_has_projects` WRITE;
 /*!40000 ALTER TABLE `kindofexpert_has_projects` DISABLE KEYS */;
+INSERT INTO `kindofexpert_has_projects` VALUES (4,36),(1,37),(2,37),(1,38);
 /*!40000 ALTER TABLE `kindofexpert_has_projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -746,7 +764,7 @@ CREATE TABLE `languages` (
   `id` int NOT NULL AUTO_INCREMENT,
   `languagesName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -755,6 +773,7 @@ CREATE TABLE `languages` (
 
 LOCK TABLES `languages` WRITE;
 /*!40000 ALTER TABLE `languages` DISABLE KEYS */;
+INSERT INTO `languages` VALUES (9,'French'),(10,'English'),(12,'Chinese'),(13,'Japanese');
 /*!40000 ALTER TABLE `languages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -782,6 +801,7 @@ CREATE TABLE `languages_has_projects` (
 
 LOCK TABLES `languages_has_projects` WRITE;
 /*!40000 ALTER TABLE `languages_has_projects` DISABLE KEYS */;
+INSERT INTO `languages_has_projects` VALUES (9,36),(12,37),(13,37),(12,38);
 /*!40000 ALTER TABLE `languages_has_projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -796,7 +816,7 @@ CREATE TABLE `linkedinkeywords` (
   `id` int NOT NULL AUTO_INCREMENT,
   `linkedinKey` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -805,6 +825,7 @@ CREATE TABLE `linkedinkeywords` (
 
 LOCK TABLES `linkedinkeywords` WRITE;
 /*!40000 ALTER TABLE `linkedinkeywords` DISABLE KEYS */;
+INSERT INTO `linkedinkeywords` VALUES (15,'Bio');
 /*!40000 ALTER TABLE `linkedinkeywords` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -832,6 +853,7 @@ CREATE TABLE `linkedinkeywords_has_projects` (
 
 LOCK TABLES `linkedinkeywords_has_projects` WRITE;
 /*!40000 ALTER TABLE `linkedinkeywords_has_projects` DISABLE KEYS */;
+INSERT INTO `linkedinkeywords_has_projects` VALUES (15,36),(15,37),(15,38);
 /*!40000 ALTER TABLE `linkedinkeywords_has_projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -859,6 +881,7 @@ CREATE TABLE `past_companies` (
 
 LOCK TABLES `past_companies` WRITE;
 /*!40000 ALTER TABLE `past_companies` DISABLE KEYS */;
+INSERT INTO `past_companies` VALUES (28,17),(29,17),(28,18),(29,18),(30,18),(29,19),(29,20),(31,20),(31,21);
 /*!40000 ALTER TABLE `past_companies` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -917,7 +940,7 @@ CREATE TABLE `projects` (
   CONSTRAINT `fk_projects_expertiseLevel1` FOREIGN KEY (`expertiseLevel_id`) REFERENCES `expertiselevel` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_projects_projecttype1` FOREIGN KEY (`projectType_id`) REFERENCES `projecttype` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_projects_status1` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -926,6 +949,7 @@ CREATE TABLE `projects` (
 
 LOCK TABLES `projects` WRITE;
 /*!40000 ALTER TABLE `projects` DISABLE KEYS */;
+INSERT INTO `projects` VALUES (36,'2022/02/01','2022/03/15','Leading blablabla',1,'jfdfi fdskjfdq fdifd qfmlkjfd qfidfq sdmflkjf qsdmkj kdfj.',500,'PJT01',1,2,6,2),(37,'2022/03/02','2022/04/27','Title 02',2,'fjkdsfjqdslj fijfqdjdf fdkj fifdj fdskjfds.',800,'PJT02',2,4,8,5),(38,'2022/09/12','2022/12/12','Project title 3',2,'dsqfmldsjqflkmjsdf',800,'PJT03',3,2,7,4);
 /*!40000 ALTER TABLE `projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -953,6 +977,7 @@ CREATE TABLE `projects_exclude_company` (
 
 LOCK TABLES `projects_exclude_company` WRITE;
 /*!40000 ALTER TABLE `projects_exclude_company` DISABLE KEYS */;
+INSERT INTO `projects_exclude_company` VALUES (17,36),(19,36),(19,37),(20,37),(21,38);
 /*!40000 ALTER TABLE `projects_exclude_company` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -980,6 +1005,7 @@ CREATE TABLE `projects_has_jobtitle` (
 
 LOCK TABLES `projects_has_jobtitle` WRITE;
 /*!40000 ALTER TABLE `projects_has_jobtitle` DISABLE KEYS */;
+INSERT INTO `projects_has_jobtitle` VALUES (36,5),(38,5),(36,6),(37,6),(38,6),(36,7),(36,8),(37,8),(38,8),(37,9),(36,10);
 /*!40000 ALTER TABLE `projects_has_jobtitle` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1007,6 +1033,7 @@ CREATE TABLE `projects_has_practice` (
 
 LOCK TABLES `projects_has_practice` WRITE;
 /*!40000 ALTER TABLE `projects_has_practice` DISABLE KEYS */;
+INSERT INTO `projects_has_practice` VALUES (1,36),(1,37),(2,37),(2,38);
 /*!40000 ALTER TABLE `projects_has_practice` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1061,6 +1088,7 @@ CREATE TABLE `projects_need_fonction` (
 
 LOCK TABLES `projects_need_fonction` WRITE;
 /*!40000 ALTER TABLE `projects_need_fonction` DISABLE KEYS */;
+INSERT INTO `projects_need_fonction` VALUES (4,36),(11,37),(13,37),(3,38),(4,38),(11,38),(12,38);
 /*!40000 ALTER TABLE `projects_need_fonction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1088,6 +1116,7 @@ CREATE TABLE `projects_need_geoexpertise` (
 
 LOCK TABLES `projects_need_geoexpertise` WRITE;
 /*!40000 ALTER TABLE `projects_need_geoexpertise` DISABLE KEYS */;
+INSERT INTO `projects_need_geoexpertise` VALUES (18,36),(19,36),(19,37),(21,37),(22,37),(21,38);
 /*!40000 ALTER TABLE `projects_need_geoexpertise` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1115,6 +1144,7 @@ CREATE TABLE `projects_need_industry` (
 
 LOCK TABLES `projects_need_industry` WRITE;
 /*!40000 ALTER TABLE `projects_need_industry` DISABLE KEYS */;
+INSERT INTO `projects_need_industry` VALUES (3,36),(7,36),(6,37),(7,37),(10,37),(3,38),(6,38),(7,38);
 /*!40000 ALTER TABLE `projects_need_industry` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1142,6 +1172,7 @@ CREATE TABLE `projects_recommend_company` (
 
 LOCK TABLES `projects_recommend_company` WRITE;
 /*!40000 ALTER TABLE `projects_recommend_company` DISABLE KEYS */;
+INSERT INTO `projects_recommend_company` VALUES (19,36),(20,37),(17,38),(20,38);
 /*!40000 ALTER TABLE `projects_recommend_company` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1180,7 +1211,7 @@ CREATE TABLE `sector` (
   `id` int NOT NULL AUTO_INCREMENT,
   `sectorName` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1189,6 +1220,7 @@ CREATE TABLE `sector` (
 
 LOCK TABLES `sector` WRITE;
 /*!40000 ALTER TABLE `sector` DISABLE KEYS */;
+INSERT INTO `sector` VALUES (8,'Clinics'),(9,'None');
 /*!40000 ALTER TABLE `sector` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1203,7 +1235,7 @@ CREATE TABLE `service` (
   `id` int NOT NULL AUTO_INCREMENT,
   `serviceName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1212,6 +1244,7 @@ CREATE TABLE `service` (
 
 LOCK TABLES `service` WRITE;
 /*!40000 ALTER TABLE `service` DISABLE KEYS */;
+INSERT INTO `service` VALUES (6,'1h Call'),(7,'Conference');
 /*!40000 ALTER TABLE `service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1239,6 +1272,7 @@ CREATE TABLE `service_has_projects` (
 
 LOCK TABLES `service_has_projects` WRITE;
 /*!40000 ALTER TABLE `service_has_projects` DISABLE KEYS */;
+INSERT INTO `service_has_projects` VALUES (6,36),(7,36),(7,37),(6,38),(7,38);
 /*!40000 ALTER TABLE `service_has_projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1254,7 +1288,7 @@ CREATE TABLE `specialty` (
   `specialtyName` varchar(255) NOT NULL,
   PRIMARY KEY (`id`,`specialtyName`),
   UNIQUE KEY `specialtyName_UNIQUE` (`specialtyName`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1263,6 +1297,7 @@ CREATE TABLE `specialty` (
 
 LOCK TABLES `specialty` WRITE;
 /*!40000 ALTER TABLE `specialty` DISABLE KEYS */;
+INSERT INTO `specialty` VALUES (14,'Biotech'),(15,'None');
 /*!40000 ALTER TABLE `specialty` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1299,4 +1334,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-31 19:06:04
+-- Dump completed on 2022-03-31 21:16:14
