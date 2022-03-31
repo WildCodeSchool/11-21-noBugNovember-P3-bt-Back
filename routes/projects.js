@@ -653,7 +653,6 @@ projectsRouter.post('/', (req, res) => {
       connection.query(sql2, [pra], (err, result) => {
         if (err) {
           console.error(err)
-          res.status(500).send('Error requesting POST2 projects')
         } else {
           let ecie = []
           for (let i = 0; i < excludedCompany_id.length; i++) {
@@ -662,7 +661,6 @@ projectsRouter.post('/', (req, res) => {
           connection.query(sql3, [ecie], (err, result) => {
             if (err) {
               console.error(err)
-              res.status(500).send('Error requesting POST3 projects')
             } else {
               let fon = []
               for (let i = 0; i < fonction_id.length; i++) {
@@ -671,7 +669,6 @@ projectsRouter.post('/', (req, res) => {
               connection.query(sql4, [fon], (err, result) => {
                 if (err) {
                   console.error(err)
-                  res.status(500).send('Error requesting POST4 projects')
                 } else {
                   let geo = []
                   for (let i = 0; i < geoExpertise_id.length; i++) {
@@ -680,7 +677,6 @@ projectsRouter.post('/', (req, res) => {
                   connection.query(sql5, [geo], (err, result) => {
                     if (err) {
                       console.error(err)
-                      res.status(500).send('Error requesting POST5 projects')
                     } else {
                       let ind = []
                       for (let i = 0; i < industry_id.length; i++) {
@@ -689,9 +685,6 @@ projectsRouter.post('/', (req, res) => {
                       connection.query(sql6, [ind], (err, result) => {
                         if (err) {
                           console.error(err)
-                          res
-                            .status(500)
-                            .send('Error requesting POST6 projects')
                         } else {
                           let job = []
                           for (let i = 0; i < jobTitle_id.length; i++) {
@@ -700,9 +693,6 @@ projectsRouter.post('/', (req, res) => {
                           connection.query(sql7, [job], (err, result) => {
                             if (err) {
                               console.error(err)
-                              res
-                                .status(500)
-                                .send('Error requesting POST7 projects')
                             } else {
                               let koe = []
                               for (let i = 0; i < kindOfExpert_id.length; i++) {
@@ -711,9 +701,6 @@ projectsRouter.post('/', (req, res) => {
                               connection.query(sql8, [koe], (err, result) => {
                                 if (err) {
                                   console.error(err)
-                                  res
-                                    .status(500)
-                                    .send('Error requesting POST8 projects')
                                 } else {
                                   let lan = []
                                   for (
@@ -729,11 +716,6 @@ projectsRouter.post('/', (req, res) => {
                                     (err, result) => {
                                       if (err) {
                                         console.error(err)
-                                        res
-                                          .status(500)
-                                          .send(
-                                            'Error requesting POST9 projects'
-                                          )
                                       } else {
                                         let lin = []
                                         for (
@@ -749,11 +731,6 @@ projectsRouter.post('/', (req, res) => {
                                           (err, result) => {
                                             if (err) {
                                               console.error(err)
-                                              res
-                                                .status(500)
-                                                .send(
-                                                  'Error requesting POST10 projects'
-                                                )
                                             } else {
                                               let ecie = []
                                               for (
@@ -772,11 +749,6 @@ projectsRouter.post('/', (req, res) => {
                                                 (err, result) => {
                                                   if (err) {
                                                     console.error(err)
-                                                    res
-                                                      .status(500)
-                                                      .send(
-                                                        'Error requesting POST11 projects'
-                                                      )
                                                   } else {
                                                     let se = []
                                                     for (
@@ -857,7 +829,6 @@ projectsRouter.put('/:id', async (req, res) => {
   const sqlData7 = body.excludedCompany_id
   const sqlData8 = body.jobTitle_id
   const sqlData9 = body.practice_id
-  // const sqlData10 = body.projectType_id
   const sqlData11 = body.fonction_id
   const sqlData12 = body.industry_id
   const sqlData13 = body.exampleCompany_id
@@ -898,10 +869,6 @@ projectsRouter.put('/:id', async (req, res) => {
   let sql9Del = 'DELETE FROM projects_has_practice WHERE projects_id = ?'
   let sql9Post =
     'INSERT INTO projects_has_practice (projects_id, practice_id) VALUES ?;'
-
-  // let sql10Del = 'DELETE FROM projects_has_projecttype WHERE projects_id = ?'
-  // let sql10Post =
-  //   'INSERT INTO projects_has_projecttype (projects_id, projectType_id) VALUES ?;'
 
   let sql11Del = 'DELETE FROM projects_need_fonction WHERE projects_id = ?'
   let sql11Post =
@@ -1133,29 +1100,6 @@ projectsRouter.put('/:id', async (req, res) => {
       }
     })
   }
-
-  // /********************** SQLDATA10 - PROJECT TYPE ******************/
-  // if (sqlData10.length > 0) {
-  //   connection.query(sql10Del, id, (err, result) => {
-  //     if (err) {
-  //       console.error(err)
-  //       res.status(500).send('Error updating DELETE10 projects')
-  //     } else {
-  //       let pt = []
-  //       for (let i = 0; i < sqlData10.length; i++) {
-  //         pt.push([id, sqlData10[i]])
-  //       }
-  //       connection.query(sql10Post, [pt], (err, result) => {
-  //         if (err) {
-  //           console.error(err)
-  //           res.status(500).send('Error updating POST10 projects')
-  //         } else {
-  //           resultEnd = result
-  //         }
-  //       })
-  //     }
-  //   })
-  // }
 
   /********************** SQLDATA11 - FONCTION ******************/
   if (sqlData11.length > 0) {

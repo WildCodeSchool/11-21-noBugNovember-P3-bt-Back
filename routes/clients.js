@@ -65,7 +65,6 @@ clientsRouter.get('/form', (req, res) => {
               connection.query(sqlfunc, (errfunc, resultfunc) => {
                 if (errfunc) {
                   console.error(errfunc)
-                  res.status(500).send('Error requesting form datas')
                 } else {
                   resultfunc.forEach(func =>
                     fonction.push({
@@ -77,7 +76,6 @@ clientsRouter.get('/form', (req, res) => {
                   connection.query(sqlcie, (errcie, resultcie) => {
                     if (errcie) {
                       console.error(errcie)
-                      res.status(500).send('Error requesting form datas')
                     } else {
                       resultcie.forEach(company =>
                         companyName.push({
@@ -93,7 +91,6 @@ clientsRouter.get('/form', (req, res) => {
                         fonction: [...fonction],
                         companyName: [...companyName]
                       }
-                      console.log('options client', options)
                       res.status(200).json(options)
                     }
                   })
@@ -247,7 +244,6 @@ clientsRouter.post('/', (req, res) => {
       connection.query(sql2, [ctc], (err2, result2) => {
         if (err2) {
           console.error(err2)
-          res.status(500).send('Error requesting POST2 clients')
         } else {
           let fct = []
           for (let i = 0; i < fonction_id.length; i++) {
@@ -256,7 +252,6 @@ clientsRouter.post('/', (req, res) => {
           connection.query(sql3, [fct], (err3, result3) => {
             if (err3) {
               console.error(err3)
-              res.status(500).send('Error requesting POST3 clients')
             } else {
               let svc = []
               for (let i = 0; i < service_id.length; i++) {

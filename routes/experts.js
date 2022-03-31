@@ -612,7 +612,7 @@ expertsRouter.post('/', (req, res) => {
       connection.query(sql2, [lan], (err, result) => {
         if (err) {
           console.error(err)
-          res.status(500).send('Error requesting POST2 experts')
+          // res.status(500).send('Error requesting POST2 experts')
         } else {
           let pcom = []
           for (let i = 0; i < pastCompany_id.length; i++) {
@@ -621,7 +621,7 @@ expertsRouter.post('/', (req, res) => {
           connection.query(sql3, [pcom], (err, result) => {
             if (err) {
               console.error(err)
-              res.status(500).send('Error requesting POST3 experts')
+              // res.status(500).send('Error requesting POST3 experts')
             } else {
               let ctc = []
               for (let i = 0; i < contactType_id.length; i++) {
@@ -630,7 +630,7 @@ expertsRouter.post('/', (req, res) => {
               connection.query(sql4, [ctc], (err, result) => {
                 if (err) {
                   console.error(err)
-                  res.status(500).send('Error requesting POST4 experts')
+                  // res.status(500).send('Error requesting POST4 experts')
                 } else {
                   let geo = []
                   for (let i = 0; i < geoExpertise_id.length; i++) {
@@ -639,7 +639,7 @@ expertsRouter.post('/', (req, res) => {
                   connection.query(sql5, [geo], (err, result) => {
                     if (err) {
                       console.error(err)
-                      res.status(500).send('Error requesting POST5 experts')
+                      // res.status(500).send('Error requesting POST5 experts')
                     } else {
                       let pjt = []
                       for (let i = 0; i < projects_id.length; i++) {
@@ -648,7 +648,7 @@ expertsRouter.post('/', (req, res) => {
                       connection.query(sql6, [pjt], (err, result) => {
                         if (err) {
                           console.error(err)
-                          res.status(500).send('Error requesting POST6 experts')
+                          // res.status(500).send('Error requesting POST6 experts')
                         } else {
                           let indu = []
                           for (let i = 0; i < industry_id.length; i++) {
@@ -657,9 +657,8 @@ expertsRouter.post('/', (req, res) => {
                           connection.query(sql7, [indu], (err, result) => {
                             if (err) {
                               console.error(err)
-                              res
-                                .status(500)
-                                .send('Error requesting POST7 experts')
+                              res.status(500)
+                              // .send('Error requesting POST7 experts')
                             } else {
                               let fct = []
                               for (let i = 0; i < fonction_id.length; i++) {
@@ -668,9 +667,8 @@ expertsRouter.post('/', (req, res) => {
                               connection.query(sql8, [fct], (err, result) => {
                                 if (err) {
                                   console.error(err)
-                                  res
-                                    .status(500)
-                                    .send('Error requesting POST8 experts')
+                                  res.status(500)
+                                  // .send('Error requesting POST8 experts')
                                 } else {
                                   let hcp = []
                                   for (let i = 0; i < hcpType_id.length; i++) {
@@ -682,11 +680,11 @@ expertsRouter.post('/', (req, res) => {
                                     (err, result) => {
                                       if (err) {
                                         console.error(err)
-                                        res
-                                          .status(500)
-                                          .send(
-                                            'Error requesting POST9 experts'
-                                          )
+                                        // res
+                                        //   .status(500)
+                                        //   .send(
+                                        //     'Error requesting POST9 experts'
+                                        //   )
                                       } else {
                                         let sct = []
                                         for (
@@ -702,11 +700,11 @@ expertsRouter.post('/', (req, res) => {
                                           (err, result) => {
                                             if (err) {
                                               console.error(err)
-                                              res
-                                                .status(500)
-                                                .send(
-                                                  'Error requesting POST10 experts'
-                                                )
+                                              // res
+                                              //   .status(500)
+                                              //   .send(
+                                              //     'Error requesting POST10 experts'
+                                              //   )
                                             } else {
                                               let spc = []
                                               for (
@@ -722,11 +720,11 @@ expertsRouter.post('/', (req, res) => {
                                                 (err, result) => {
                                                   if (err) {
                                                     console.error(err)
-                                                    res
-                                                      .status(500)
-                                                      .send(
-                                                        'Error requesting POST11 experts'
-                                                      )
+                                                    // res
+                                                    //   .status(500)
+                                                    //   .send(
+                                                    //     'Error requesting POST11 experts'
+                                                    //   )
                                                   } else {
                                                     res.sendStatus(200)
                                                   }
