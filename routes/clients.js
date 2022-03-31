@@ -3,7 +3,8 @@ const connection = require('../config/db.js')
 
 clientsRouter.get('/', (req, res) => {
   let sql =
-    'SELECT cl.id, cl.firstname, cl.lastname, cl.email, cl.phone, cl.city, cl.feedbackclient AS feedbackClient, cl.numClients AS numClient, ct.companyTypeName, c.companyName, group_concat(DISTINCT cty.contactTypeName) AS contactType, group_concat(DISTINCT l.languagesName) AS languages,group_concat(DISTINCT se.serviceName) AS service,group_concat(DISTINCT projects.numProject) AS numProject FROM clients AS cl INNER JOIN companytype AS ct ON ct.id = cl.companyType_id INNER JOIN company AS c ON c.id = cl.company_id INNER JOIN clients_has_contacttype ON cl.id = clients_has_contacttype.clients_id INNER JOIN contacttype AS cty ON cty.id = clients_has_contacttype.contactType_id INNER JOIN clients_has_languages ON cl.id = clients_has_languages.clients_id INNER JOIN languages AS l ON l.id = clients_has_languages.languages_id INNER JOIN clients_has_service ON cl.id = clients_has_service.clients_id INNER JOIN service AS se ON se.id = clients_has_service.service_id INNER JOIN projects ON cl.id = projects.client_id GROUP BY cl.id'
+    'SELECT cl.id, cl.firstname, cl.lastname, cl.email, cl.phone, cl.city, cl.feedbackclient AS feedbackClient, cl.numClients AS numClient, ct.companyTypeName, c.companyName, group_concat(DISTINCT cty.contactTypeName SEPARATOR ", ") AS contactType, group_concat(DISTINCT fct.fonctionName SEPARATOR ", ") AS fonction, group_concat(DISTINCT se.serviceName SEPARATOR ", ") AS service,group_concat(DISTINCT projects.numProject SEPARATOR ", ") AS numProject FROM clients AS cl LEFT JOIN companytype AS ct ON ct.id = cl.companyType_id LEFT JOIN company AS c ON c.id = cl.company_id LEFT JOIN clients_has_contacttype ON cl.id = clients_has_contacttype.clients_id LEFT JOIN contacttype AS cty ON cty.id = clients_has_contacttype.contactType_id LEFT JOIN clients_has_fonction AS cfct ON cfct.clients_id = cl.id LEFT JOIN fonction AS fct ON fct.id = cfct.fonction_id LEFT JOIN clients_has_service ON cl.id = clients_has_service.clients_id LEFT JOIN service AS se ON se.id = clients_has_service.service_id LEFT JOIN projects ON cl.id = projects.client_id GROUP BY cl.id'
+
   connection.query(sql, (err, result) => {
     if (err) {
       console.error(err)
@@ -20,13 +21,13 @@ clientsRouter.get('/form', (req, res) => {
   let sqlfavc = 'SELECT id, contactTypeName FROM contactType;'
   let sqlkob = 'SELECT id, companyTypeName FROM companyType;'
   let sqldeserv = 'SELECT id, serviceName FROM service;'
-  let sqllang = 'SELECT id, languagesName FROM languages;'
+  let sqlfunc = 'SELECT id, fonctionName FROM fonction;'
   let sqlcie = 'SELECT id, companyName FROM company;'
   let companyName = []
   let contactType = []
   let companyType = []
   let service = []
-  let languages = []
+  let fonction = []
 
   connection.query(sqlfavc, (errfavc, resultfavc) => {
     if (errfavc) {
@@ -61,16 +62,16 @@ clientsRouter.get('/form', (req, res) => {
                   label: deserv.serviceName
                 })
               )
-              connection.query(sqllang, (errlang, resultlang) => {
-                if (errlang) {
-                  console.error(errlang)
+              connection.query(sqlfunc, (errfunc, resultfunc) => {
+                if (errfunc) {
+                  console.error(errfunc)
                   res.status(500).send('Error requesting form datas')
                 } else {
-                  resultlang.forEach(language =>
-                    languages.push({
-                      id: language.id,
-                      value: language.languagesName,
-                      label: language.languagesName
+                  resultfunc.forEach(func =>
+                    fonction.push({
+                      id: func.id,
+                      value: func.fonctionName,
+                      label: func.fonctionName
                     })
                   )
                   connection.query(sqlcie, (errcie, resultcie) => {
@@ -89,9 +90,10 @@ clientsRouter.get('/form', (req, res) => {
                         contactType: [...contactType],
                         companyType: [...companyType],
                         service: [...service],
-                        languages: [...languages],
+                        fonction: [...fonction],
                         companyName: [...companyName]
                       }
+                      console.log('options client', options)
                       res.status(200).json(options)
                     }
                   })
@@ -107,9 +109,8 @@ clientsRouter.get('/form', (req, res) => {
 
 clientsRouter.get('/form/:id', (req, res) => {
   let id = req.params.id
-  console.log('fomid id', id)
   let sql =
-    'SELECT cl.id, cl.firstname, cl.lastname, cl.email, cl.phone, cl.city, cl.feedbackclient AS feedbackClient, cl.numClients AS numClient, ct.companyTypeName, c.companyName, group_concat(DISTINCT cty.contactTypeName SEPARATOR ", ") AS contactType, group_concat(DISTINCT l.languagesName SEPARATOR ", ") AS languages,group_concat(DISTINCT se.serviceName SEPARATOR ", ") AS service,group_concat(DISTINCT projects.numProject SEPARATOR ", ") AS numProject FROM clients AS cl INNER JOIN companytype AS ct ON ct.id = cl.companyType_id INNER JOIN company AS c ON c.id = cl.company_id INNER JOIN clients_has_contacttype ON cl.id = clients_has_contacttype.clients_id INNER JOIN contacttype AS cty ON cty.id = clients_has_contacttype.contactType_id INNER JOIN clients_has_languages ON cl.id = clients_has_languages.clients_id INNER JOIN languages AS l ON l.id = clients_has_languages.languages_id INNER JOIN clients_has_service ON cl.id = clients_has_service.clients_id INNER JOIN service AS se ON se.id = clients_has_service.service_id INNER JOIN projects ON cl.id = projects.client_id WHERE cl.numClients IN (SELECT cl.numClients FROM clients AS cl) AND cl.id = ? GROUP BY cl.id'
+    'SELECT cl.id, cl.firstname, cl.lastname, cl.email, cl.phone, cl.city, cl.feedbackclient AS feedbackClient, cl.numClients AS numClient, ct.companyTypeName, c.companyName, group_concat(DISTINCT cty.contactTypeName SEPARATOR ", ") AS contactType, group_concat(DISTINCT fct.fonctionName SEPARATOR ", ") AS fonction, group_concat(DISTINCT se.serviceName SEPARATOR ", ") AS service,group_concat(DISTINCT projects.numProject SEPARATOR ", ") AS numProject FROM clients AS cl LEFT JOIN companytype AS ct ON ct.id = cl.companyType_id LEFT JOIN company AS c ON c.id = cl.company_id LEFT JOIN clients_has_contacttype ON cl.id = clients_has_contacttype.clients_id LEFT JOIN contacttype AS cty ON cty.id = clients_has_contacttype.contactType_id LEFT JOIN clients_has_fonction AS cfct ON cfct.clients_id = cl.id LEFT JOIN fonction AS fct ON fct.id = cfct.fonction_id LEFT JOIN clients_has_service ON cl.id = clients_has_service.clients_id LEFT JOIN service AS se ON se.id = clients_has_service.service_id LEFT JOIN projects ON cl.id = projects.client_id WHERE cl.numClients IN (SELECT cl.numClients FROM clients AS cl) AND cl.id = ? GROUP BY cl.id'
   connection.query(sql, id, (err, result) => {
     if (err) {
       console.error(err)
@@ -151,11 +152,11 @@ clientsRouter.get('/form/:id', (req, res) => {
           service.push({ value: pjtArr[i], label: pjtArr[i] })
         }
       }
-      let languages = []
-      if (result[0].languages) {
-        const pjtArr = result[0].languages.split(', ')
-        for (let i = 0; i < pjtArr.length; i++) {
-          languages.push({ value: pjtArr[i], label: pjtArr[i] })
+      let fonction = []
+      if (result[0].fonction) {
+        const fctArr = result[0].fonction.split(', ')
+        for (let i = 0; i < fctArr.length; i++) {
+          fonction.push({ value: fctArr[i], label: fctArr[i] })
         }
       }
       const feedbackClient = result[0].feedbackClient
@@ -172,7 +173,7 @@ clientsRouter.get('/form/:id', (req, res) => {
         contactType: contactType,
         companyType: companyType,
         service: service,
-        languages: languages,
+        fonction: fonction,
         feedbackClient: feedbackClient
       }
       res.status(200).json(datas)
@@ -196,19 +197,19 @@ clientsRouter.post('/test', (req, res) => {
 })
 
 clientsRouter.post('/', (req, res) => {
+  console.log('req.body', req.body)
   const {
-    firstname,
-    lastname,
-    email,
-    phone,
     city,
-    feedbackClient,
     companyType_id,
     company_id,
-    numClients,
     contactType_id,
-    clients_id,
-    languages_id,
+    email,
+    feedbackClient,
+    firstname,
+    fonction_id,
+    lastname,
+    numClients,
+    phone,
     service_id
   } = req.body
 
@@ -224,16 +225,16 @@ clientsRouter.post('/', (req, res) => {
     company_id
   ]
 
-  let sql =
+  let sql1 =
     'INSERT INTO clients (firstname, lastname , email, phone, city, feedbackClient, numClients, companyType_id, company_id) VALUES (?,?,?,?,?,?,?,?,?);'
   let sql2 =
-    'INSERT INTO clients_has_contacttype (clients_id, contactType_id) VALUES (?,?);'
+    'INSERT INTO clients_has_contacttype (clients_id, contactType_id) VALUES ?;'
   let sql3 =
-    'INSERT INTO clients_has_languages (clients_id, languages_id) VALUES (?,?);'
+    'INSERT INTO clients_has_fonction (clients_id, fonction_id) VALUES ?;'
   let sql4 =
-    'INSERT INTO clients_has_service (clients_id, service_id) VALUES (?,?);'
+    'INSERT INTO clients_has_service (clients_id, service_id) VALUES ?;'
 
-  connection.query(sql, datas, (err, result) => {
+  connection.query(sql1, datas, (err, result) => {
     if (err) {
       console.error(err)
       res.status(500).send('Error requesting POST clients')
@@ -248,11 +249,11 @@ clientsRouter.post('/', (req, res) => {
           console.error(err2)
           res.status(500).send('Error requesting POST2 clients')
         } else {
-          let lan = []
-          for (let i = 0; i < languages_id.length; i++) {
-            lan.push([id, languages_id[i]])
+          let fct = []
+          for (let i = 0; i < fonction_id.length; i++) {
+            fct.push([id, fonction_id[i]])
           }
-          connection.query(sql3, [lan], (err3, result3) => {
+          connection.query(sql3, [fct], (err3, result3) => {
             if (err3) {
               console.error(err3)
               res.status(500).send('Error requesting POST3 clients')
@@ -266,7 +267,7 @@ clientsRouter.post('/', (req, res) => {
                   console.error(err4)
                   res.status(500).send('Error requesting POST4 clients')
                 } else {
-                  res.status(200).json(result4)
+                  res.sendStatus(200)
                 }
               })
             }
@@ -290,16 +291,16 @@ clientsRouter.put('/form/:id', async (req, res) => {
     numClients: body.numClients,
     companyType_id: body.companyType_id
   }
-  const sqlData2 = body.languages_id
+  const sqlData2 = body.fonction_id
   const sqlData3 = body.contactType_id
   const sqlData4 = body.service_id
 
   let resultEnd = ''
 
   let sql1 = 'UPDATE clients SET '
-  let sql2Del = 'DELETE FROM clients_has_languages WHERE clients_id = ?'
+  let sql2Del = 'DELETE FROM clients_has_fonction WHERE clients_id = ?'
   let sql2Post =
-    'INSERT INTO clients_has_languages (clients_id, languages_id) VALUES ?;'
+    'INSERT INTO clients_has_fonction (clients_id, fonction_id) VALUES ?;'
   let sql3Del = 'DELETE FROM clients_has_contacttype WHERE clients_id = ?'
   let sql3Post =
     'INSERT INTO clients_has_contacttype (clients_id, contactType_id) VALUES ?;'
@@ -342,18 +343,18 @@ clientsRouter.put('/form/:id', async (req, res) => {
     })
   }
 
-  /********************** SQLDATA2 - LANGUAGES ******************/
+  /********************** SQLDATA2 - FONCTION ******************/
   if (sqlData2.length > 0) {
     connection.query(sql2Del, id, (err, result) => {
       if (err) {
         console.error(err)
         res.status(500).send('Error updating DELETE2 experts')
       } else {
-        let lan = []
+        let fct = []
         for (let i = 0; i < sqlData2.length; i++) {
-          lan.push([id, sqlData2[i]])
+          fct.push([id, sqlData2[i]])
         }
-        connection.query(sql2Post, [lan], (err, result) => {
+        connection.query(sql2Post, [fct], (err, result) => {
           if (err) {
             console.error(err)
             res.status(500).send('Error updating POST2 experts')
@@ -411,7 +412,6 @@ clientsRouter.put('/form/:id', async (req, res) => {
     })
   }
 
-  console.log('resultEnd', resultEnd)
   res.send(resultEnd)
 })
 

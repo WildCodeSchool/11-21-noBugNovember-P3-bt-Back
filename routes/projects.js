@@ -801,7 +801,7 @@ projectsRouter.post('/', (req, res) => {
                                                               'Error requesting POST12 projects'
                                                             )
                                                         } else {
-                                                          res.status(200).json
+                                                          res.sendStatus(200)
                                                         }
                                                       }
                                                     )
