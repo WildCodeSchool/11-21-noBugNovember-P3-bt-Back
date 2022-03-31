@@ -32,7 +32,7 @@ filterRouter.get('/', (req, res) => {
     if (inconnue.length > 1) {
       inconnue = inconnue.join(',')
     }
-    // console.log("result", inconnue)
+
     filter += `AND e.kindOfExpert_id IN (${inconnue})`
   }
 
@@ -46,7 +46,7 @@ filterRouter.get('/', (req, res) => {
     // if (inconnue.length > 1) {
     //   inconnue = inconnue.join(',')
     // }
-    console.log('price :', price)
+
     if (price == 1) {
       filter += 'AND price < 250 '
     } else if (price == 2) {
