@@ -40,39 +40,55 @@ authRouter.post('/protected', (req, res) => {
   })
 })
 
-authRouter.post('/login', async (req, res) => {
-  const { password, username } = req.body
-  console.log(password)
-  // const saltRounds = 10
-  // bcrypt.hash(password, saltRounds, function (err, hash) {
-  //   console.log(hash)
-  // })
+// authRouter.post('/login', async (req, res) => {
+//   const { password, username } = req.body
+//   console.log(password)
+//   // const saltRounds = 10
+//   // bcrypt.hash(password, saltRounds, function (err, hash) {
+//   //   console.log(hash)
+//   // })
 
-  if (username === 'trucbidule@gmail.com') {
-    // console.log('on est la')
-    const hashedPassword =
-      '7578ca5ba39028f7f0b0a9005de573b1187eff96afd0bfbbd2d9849e4a3973ad'
-    const verifyedPassword = await bcrypt.compare(password, hashedPassword)
-    console.log(verifyedPassword)
-    if (password === hashedPassword) {
+//   if (username === 'trucbidule@gmail.com') {
+//     // console.log('on est la')
+//     const hashedPassword =
+//       '7578ca5ba39028f7f0b0a9005de573b1187eff96afd0bfbbd2d9849e4a3973ad'
+//     const verifyedPassword = await bcrypt.compare(password, hashedPassword)
+//     console.log(verifyedPassword)
+//     if (password === hashedPassword) {
+
+//       // if (verifyedPassword) {
+//       //   const tokenUserinfo = {
+//       //     username: username,
+//       //     status: 'PouletMaster'
+//       //   }
+
+//     }
+//   } else {
+//     res.status(500).send('Error mdp')
+//   }
+// })
+
+authRouter.post('/login', async (req, res) => {
+  const sql = 'SELECT id, email FROM admin WHERE email=? AND password=?'
+  const values = [req.body.email, req.body.password]
+
+  connection.query(sql, values, (err, result) => {
+    if (err) throw err
+    if (result.length === 0) {
+      res.status(404).send('error')
+    } else {
       const tokenUserinfo = {
-        username: username,
+        id: result.id,
+        email: result.email,
         status: 'PouletMaster'
       }
-      // if (verifyedPassword) {
-      //   const tokenUserinfo = {
-      //     username: username,
-      //     status: 'PouletMaster'
-      //   }
       const token = jwt.sign(tokenUserinfo, process.env.JWT_SECRET)
       console.log(token)
       res.header('Access-Control-Expose-Headers', 'x-access-token')
       res.set('x-access-token', token)
       res.status(200).send({ mess: 'user connected' })
     }
-  } else {
-    res.status(500).send('Error mdp')
-  }
+  })
 })
 
 module.exports = authRouter
