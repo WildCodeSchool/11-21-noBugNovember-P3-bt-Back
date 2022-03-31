@@ -24,8 +24,6 @@ expertsRouter.get('/maxicard/:id', (req, res) => {
       console.error(err)
       res.status(500).send('Error requesting GET experts')
     } else {
-      console.log('get', result)
-
       res.status(200).json(result)
     }
   })
@@ -513,7 +511,6 @@ expertsRouter.get('/form/:id', (req, res) => {
         sectorName: sectorName,
         specialty: specialty
       }
-      console.log('datas', datas)
       res.status(200).json(datas)
     }
   })
@@ -580,7 +577,6 @@ expertsRouter.post('/', (req, res) => {
     keywords,
     jobtitle_id
   ]
-  console.log('datas POST', datas)
 
   let sql =
     'INSERT INTO experts (firstname, lastname, email, phone, company_id, linkedinProfile, price, numExpert, kindOfExpert_id, practice_id, expertiseLevel_id, feedbackExpert, cost, keywords, jobtitle_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
