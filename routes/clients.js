@@ -410,4 +410,17 @@ clientsRouter.put('/form/:id', async (req, res) => {
   res.send(resultEnd)
 })
 
+clientsRouter.delete('/form/:id', (req, res) => {
+  const id = parseInt(req.params.id)
+  const sql = 'DELETE FROM clients WHERE id = ?;'
+  connection.query(sql, id, (err, result) => {
+    if (err) {
+      console.error(err)
+      res.status(500).send('Error Delete clients')
+    } else {
+      res.sendStatus(200)
+    }
+  })
+})
+
 module.exports = clientsRouter
